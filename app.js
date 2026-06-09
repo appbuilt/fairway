@@ -840,6 +840,10 @@ function Home(_ref2) {
       gap: 1
     }
   }, [{
+    label: "Courses",
+    sub: "Manage courses",
+    nav: "courses"
+  }, {
     label: "Round History",
     sub: "View past rounds",
     nav: "history"
@@ -847,10 +851,6 @@ function Home(_ref2) {
     label: "Analytics",
     sub: "Stats & insights",
     nav: "analytics"
-  }, {
-    label: "Courses",
-    sub: "Manage courses",
-    nav: "courses"
   }, {
     label: "Profile",
     sub: "Settings",
@@ -1797,7 +1797,7 @@ function HoleInsight(_ref10) {
       fontSize: 14,
       color: "var(--muted)"
     }
-  }, open ? "▲" : "▼")), open && /*#__PURE__*/React.createElement("div", {
+  }, open ? "Close" : "View")), open && /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "0 16px 16px"
     }
