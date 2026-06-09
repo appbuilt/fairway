@@ -1,4 +1,4 @@
-const CACHE = 'fairway-v4';
+const CACHE = 'fairway-v5';
 const ASSETS = ['/', '/index.html', '/app.js', '/icon-192.png', '/icon-512.png',
   'https://unpkg.com/react@18/umd/react.production.min.js',
   'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
@@ -17,7 +17,12 @@ self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    ).then(() => {
+      self.clients.claim();
+      self.clients.matchAll({type:'window'}).then(clients => {
+        clients.forEach(client => client.postMessage('UPDATE_READY'));
+      });
+    })
   );
 });
 
