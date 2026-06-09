@@ -460,6 +460,20 @@ function Birdie() {
     await save(courses, nr, playerName);
     setView("summary");
   };
+  // Clear all round scores (keeps name + courses)
+const clearRounds = async () => {
+  setRounds([]);
+  setActiveRound(null);
+  await save(courses, [], playerName);
+};
+
+// Full reset — wipe everything, return to login
+const resetAll = async () => {
+  localStorage.removeItem(KEY);
+  setRounds([]);
+  setActiveRound(null);
+  setName("");
+};
   const deleteRound = async id => {
     const nr = rounds.filter(r => r.id !== id);
     setRounds(nr);
@@ -583,6 +597,8 @@ function Birdie() {
     playerName: playerName,
     rounds: rounds,
     onSaveName: saveName,
+    onClearRounds: clearRounds,
+    onResetAll: resetAll, 
     onBack: () => setView("home")
   }));
 }
@@ -2985,116 +3001,212 @@ function Courses(_ref16) {
 // ─── PROFILE ────────────────────────────────────────────────────
 function Profile(_ref17) {
   let playerName = _ref17.playerName,
-    rounds = _ref17.rounds,
+    rounds     = _ref17.rounds,
     onSaveName = _ref17.onSaveName,
-    onBack = _ref17.onBack;
-  const _useState20 = useState(false),
-    editing = _useState20[0],
-    setEditing = _useState20[1];
-  const _useState21 = useState(playerName),
-    name = _useState21[0],
-    setName = _useState21[1];
+    onClearRounds = _ref17.onClearRounds,
+    onResetAll    = _ref17.onResetAll,
+    onBack        = _ref17.onBack;
+
+  const [editing, setEditing]   = useState(false);
+  const [name, setName]         = useState(playerName);
+  const [confirm, setConfirm]   = useState(null); // null | "clear" | "reset"
+
   const done = rounds.filter(r => r.completed);
   const best = done.length ? Math.min(...done.map(r => playerTotal(r, r.players[0].id))) : null;
-  return /*#__PURE__*/React.createElement("div", {
-    style: S.screen
-  }, /*#__PURE__*/React.createElement(TopBar, {
-    onBack: onBack,
-    title: "Profile"
-  }), /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: "32px 20px",
-      textAlign: "center"
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: 72,
-      height: 72,
-      borderRadius: "50%",
-      background: "var(--green)",
-      color: "var(--white)",
-      fontSize: 28,
-      fontWeight: 700,
-      fontFamily: "var(--fd)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      margin: "0 auto 16px"
-    }
-  }, playerName[0].toUpperCase()), editing ? /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      gap: 8,
-      justifyContent: "center",
-      marginBottom: 16
-    }
-  }, /*#__PURE__*/React.createElement("input", {
-    value: name,
-    onChange: e => setName(e.target.value),
-    style: {
-      ...S.input,
-      maxWidth: 200,
-      textAlign: "center"
+
+  const CONFIRM_COPY = {
+    clear: {
+      title:  "Clear all rounds?",
+      body:   "Your score history will be deleted. Your name and courses stay.",
+      action: "Yes, clear rounds",
+      fn:     onClearRounds,
     },
-    autoFocus: true
-  }), /*#__PURE__*/React.createElement("button", {
-    onClick: () => {
-      onSaveName(name);
-      setEditing(false);
+    reset: {
+      title:  "Reset everything?",
+      body:   "All data — scores, name, settings — will be wiped and you'll return to the start screen.",
+      action: "Yes, reset app",
+      fn:     onResetAll,
     },
-    style: S.btnPrimary
-  }, "Save")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontFamily: "var(--fd)",
-      fontSize: 26,
-      fontWeight: 600,
-      color: "var(--text)",
-      marginBottom: 4
-    }
-  }, playerName), /*#__PURE__*/React.createElement("button", {
-    onClick: () => setEditing(true),
-    style: {
-      background: "none",
-      border: "none",
-      color: "var(--green)",
-      cursor: "pointer",
-      fontSize: 12,
-      letterSpacing: "0.06em",
-      textDecoration: "underline",
-      fontFamily: "var(--fb)"
-    }
-  }, "Edit name")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      gap: 1,
-      marginTop: 32
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: S.statCell
-  }, /*#__PURE__*/React.createElement("div", {
-    style: S.statNum
-  }, done.length), /*#__PURE__*/React.createElement("div", {
-    style: S.statLbl
-  }, "Total Rounds")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      ...S.statCell,
-      borderBottom: "2px solid var(--red)"
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      ...S.statNum,
-      color: "var(--red)"
-    }
-  }, best || "—"), /*#__PURE__*/React.createElement("div", {
-    style: S.statLbl
-  }, "Best Score"))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 24,
-      fontSize: 14,
-      color: "var(--muted)",
-      letterSpacing: "0.04em"
-    }
-  }, "Data saved locally \u2014 no account required")));
+  };
+
+  // Confirmation modal
+  if (confirm) {
+    const c = CONFIRM_COPY[confirm];
+    return React.createElement("div", { style: S.screen },
+      React.createElement(TopBar, { onBack: () => setConfirm(null), title: "Are you sure?" }),
+      React.createElement("div", {
+        style: { padding: "40px 24px", display: "flex", flexDirection: "column", gap: 16 }
+      },
+        React.createElement("div", {
+          style: { fontFamily: "var(--fd)", fontSize: 22, fontWeight: 600, color: "var(--text)", lineHeight: 1.3 }
+        }, c.title),
+        React.createElement("div", {
+          style: { fontSize: 14, color: "var(--muted)", lineHeight: 1.65 }
+        }, c.body),
+        React.createElement("button", {
+          onClick: () => { c.fn(); setConfirm(null); },
+          style: {
+            ...S.btnPrimary,
+            background: "var(--red)",
+            marginTop: 8
+          }
+        }, c.action),
+        React.createElement("button", {
+          onClick: () => setConfirm(null),
+          style: S.btnSecondary
+        }, "Cancel")
+      )
+    );
+  }
+
+  return React.createElement("div", { style: S.screen },
+    React.createElement(TopBar, { onBack, title: "Profile" }),
+
+    // ── Avatar + name ──
+    React.createElement("div", {
+      style: { padding: "32px 20px", textAlign: "center" }
+    },
+      React.createElement("div", {
+        style: {
+          width: 72, height: 72, borderRadius: "50%",
+          background: "var(--green)", color: "var(--white)",
+          fontSize: 28, fontWeight: 700, fontFamily: "var(--fd)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          margin: "0 auto 16px"
+        }
+      }, playerName[0].toUpperCase()),
+
+      editing
+        ? React.createElement("div", {
+            style: { display: "flex", gap: 8, justifyContent: "center", marginBottom: 16 }
+          },
+            React.createElement("input", {
+              value: name,
+              onChange: e => setName(e.target.value),
+              style: { ...S.input, maxWidth: 200, textAlign: "center" },
+              autoFocus: true
+            }),
+            React.createElement("button", {
+              onClick: () => { onSaveName(name); setEditing(false); },
+              style: S.btnPrimary
+            }, "Save")
+          )
+        : React.createElement(React.Fragment, null,
+            React.createElement("div", {
+              style: { fontFamily: "var(--fd)", fontSize: 26, fontWeight: 600, color: "var(--text)", marginBottom: 4 }
+            }, playerName),
+            React.createElement("button", {
+              onClick: () => setEditing(true),
+              style: {
+                background: "none", border: "none", color: "var(--green)",
+                cursor: "pointer", fontSize: 12, letterSpacing: "0.06em",
+                textDecoration: "underline", fontFamily: "var(--fb)"
+              }
+            }, "Edit name")
+          ),
+
+      // ── Stats ──
+      React.createElement("div", { style: { display: "flex", gap: 1, marginTop: 32 } },
+        React.createElement("div", { style: S.statCell },
+          React.createElement("div", { style: S.statNum }, done.length),
+          React.createElement("div", { style: S.statLbl }, "Total Rounds")
+        ),
+        React.createElement("div", { style: { ...S.statCell, borderBottom: "2px solid var(--red)" } },
+          React.createElement("div", { style: { ...S.statNum, color: "var(--red)" } }, best || "—"),
+          React.createElement("div", { style: S.statLbl }, "Best Score")
+        )
+      ),
+
+      React.createElement("div", {
+        style: { marginTop: 24, fontSize: 14, color: "var(--muted)", letterSpacing: "0.04em" }
+      }, "Data saved locally — no account required")
+    ),
+
+    // ── Data section ──
+    React.createElement("div", {
+      style: {
+        margin: "0 0 1px",
+        borderTop: "1px solid var(--border-lt)"
+      }
+    },
+      React.createElement("div", {
+        style: {
+          padding: "12px 20px 8px",
+          fontSize: 10,
+          color: "var(--muted)",
+          letterSpacing: "0.12em",
+          textTransform: "uppercase"
+        }
+      }, "Data"),
+
+      // Clear rounds row
+      React.createElement("button", {
+        onClick: () => setConfirm("clear"),
+        style: {
+          ...S.navCard,
+          width: "100%",
+          borderRadius: 0,
+          borderBottom: "1px solid var(--border-lt)",
+          padding: "16px 20px",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12
+        }
+      },
+        React.createElement("div", null,
+          React.createElement("div", {
+            style: { fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 2 }
+          }, "Clear round history"),
+          React.createElement("div", {
+            style: { fontSize: 13, color: "var(--muted)" }
+          }, "Delete all saved scores")
+        ),
+        React.createElement("div", {
+          style: {
+            width: 8, height: 8,
+            borderRight: "2px solid var(--border)",
+            borderTop: "2px solid var(--border)",
+            transform: "rotate(45deg)",
+            flexShrink: 0
+          }
+        })
+      ),
+
+      // Reset app row
+      React.createElement("button", {
+        onClick: () => setConfirm("reset"),
+        style: {
+          ...S.navCard,
+          width: "100%",
+          borderRadius: 0,
+          padding: "16px 20px",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12
+        }
+      },
+        React.createElement("div", null,
+          React.createElement("div", {
+            style: { fontSize: 15, fontWeight: 600, color: "var(--red)", marginBottom: 2 }
+          }, "Reset app"),
+          React.createElement("div", {
+            style: { fontSize: 13, color: "var(--muted)" }
+          }, "Wipe all data and return to start")
+        ),
+        React.createElement("div", {
+          style: {
+            width: 8, height: 8,
+            borderRight: "2px solid var(--border)",
+            borderTop: "2px solid var(--border)",
+            transform: "rotate(45deg)",
+            flexShrink: 0
+          }
+        })
+      )
+    )
+  );
 }
 
 // ─── SHARED COMPONENTS ──────────────────────────────────────────
