@@ -594,40 +594,67 @@ function Birdie() {
 // ─── SPLASH ─────────────────────────────────────────────────────
 function Splash(_ref_sp) {
   let fadeOut = _ref_sp.fadeOut;
-  return /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-      display: "flex", alignItems: "center", justifyContent: "center",
-      background: "#1a4731",
-      transition: "opacity 0.5s ease",
-      opacity: fadeOut ? 0 : 1,
-      zIndex: 9999
-    }
-  },
-  /*#__PURE__*/React.createElement("style", null, `
-    @keyframes spFadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes spLine   { from{width:0} to{width:40px} }
-    @keyframes spDot    { 0%,80%,100%{opacity:.3;transform:scale(1)} 40%{opacity:1;transform:scale(1.4)} }
-    .sp-word { font-family:'Cormorant Garamond',Georgia,serif; font-size:52px; font-weight:600; color:#fff;
-               letter-spacing:.01em; line-height:1; animation:spFadeIn .8s ease forwards; opacity:1; }
-    .sp-line { height:1px; background:#c9a84c; margin:16px auto;
-               animation:spLine .8s ease .4s forwards; width:0; }
-    .sp-tag  { font-family:'Source Sans 3',sans-serif; font-size:11px; color:rgba(255,255,255,.45);
-               letter-spacing:.18em; text-transform:uppercase;
-               animation:spFadeIn .8s ease .7s forwards; opacity:1; }
-    .sp-dot  { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.3);
-               animation:spDot 1.2s ease-in-out infinite; }
-  `),
-  /*#__PURE__*/React.createElement("div", {style:{textAlign:"center"}},
-    /*#__PURE__*/React.createElement("div", {className:"sp-word"}, "Fairway"),
-    /*#__PURE__*/React.createElement("div", {className:"sp-line"}),
-    /*#__PURE__*/React.createElement("div", {className:"sp-tag"}, "Score · Track · Improve"),
-    /*#__PURE__*/React.createElement("div", {style:{display:"flex",gap:6,justifyContent:"center",marginTop:40}},
-      [0,1,2].map(i => /*#__PURE__*/React.createElement("div", {
-        key: i, className:"sp-dot", style:{animationDelay:`${i*0.2}s`}
-      }))
+
+  return React.createElement(
+    "div",
+    {
+      style: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "#1a4731",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        opacity: fadeOut ? 0 : 1,
+        transition: "opacity 0.5s ease",
+        zIndex: 9999
+      }
+    },
+    React.createElement(
+      "div",
+      { style: { textAlign: "center" } },
+
+      React.createElement(
+        "div",
+        {
+          style: {
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: "56px",
+            fontWeight: 600,
+            color: "#ffffff",
+            lineHeight: 1
+          }
+        },
+        "Fairway"
+      ),
+
+      React.createElement("div", {
+        style: {
+          width: "50px",
+          height: "1px",
+          background: "#c9a84c",
+          margin: "18px auto"
+        }
+      }),
+
+      React.createElement(
+        "div",
+        {
+          style: {
+            fontFamily: "'Source Sans 3', sans-serif",
+            fontSize: "11px",
+            color: "rgba(255,255,255,.55)",
+            letterSpacing: ".18em",
+            textTransform: "uppercase"
+          }
+        },
+        "Score · Track · Improve"
+      )
     )
-  ));
+  );
 }
 
 // ─── WELCOME ────────────────────────────────────────────────────
