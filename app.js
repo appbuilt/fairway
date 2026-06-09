@@ -605,17 +605,16 @@ function Splash(_ref_sp) {
     }
   },
   /*#__PURE__*/React.createElement("style", null, `
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Source+Sans+3:wght@400&display=swap');
     @keyframes spFadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
     @keyframes spLine   { from{width:0} to{width:40px} }
     @keyframes spDot    { 0%,80%,100%{opacity:.3;transform:scale(1)} 40%{opacity:1;transform:scale(1.4)} }
     .sp-word { font-family:'Cormorant Garamond',Georgia,serif; font-size:52px; font-weight:600; color:#fff;
-               letter-spacing:.01em; line-height:1; animation:spFadeIn .8s ease forwards; opacity:0; }
+               letter-spacing:.01em; line-height:1; animation:spFadeIn .8s ease forwards; opacity:1; }
     .sp-line { height:1px; background:#c9a84c; margin:16px auto;
                animation:spLine .8s ease .4s forwards; width:0; }
     .sp-tag  { font-family:'Source Sans 3',sans-serif; font-size:11px; color:rgba(255,255,255,.45);
                letter-spacing:.18em; text-transform:uppercase;
-               animation:spFadeIn .8s ease .7s forwards; opacity:0; }
+               animation:spFadeIn .8s ease .7s forwards; opacity:1; }
     .sp-dot  { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.3);
                animation:spDot 1.2s ease-in-out infinite; }
   `),
