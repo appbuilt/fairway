@@ -743,10 +743,18 @@ function Home(_ref2) {
     label: "Best Score",
     accent: true
   })), /*#__PURE__*/React.createElement(SectionLabel, null, "Play a Round"), /*#__PURE__*/React.createElement("div", {
+    const lastRound = rounds.length ? rounds[rounds.length - 1] : null;
+    const lastCourseId = lastRound?.courseId;
+
+    const sortedCourses = [...courses].sort((a, b) => {
+    if (a.id === lastCourseId) return -1;
+    if (b.id === lastCourseId) return 1;
+    return 0;
+  });
     style: {
       marginBottom: 1
     }
-  }, courses.map(c => /*#__PURE__*/React.createElement("button", {
+  }, sortedCourses.map(c => /*#__PURE__*/React.createElement("button", {
     key: c.id,
     onClick: () => onStartSetup(c),
     style: S.courseRow
