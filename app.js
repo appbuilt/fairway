@@ -400,9 +400,6 @@ function Birdie() {
   const _useState7 = useState(false),
     loaded = _useState7[0],
     setLoaded = _useState7[1];
-  const _useState8 = useState(false),
-    splashDone = _useState8[0],
-    setSplashDone = _useState8[1];
   const _useState9 = useState(false),
     updateReady = _useState9[0],
     setUpdateReady = _useState9[1];
@@ -423,7 +420,6 @@ function Birdie() {
       } catch {}
       setLoaded(true);
     })();
-    setTimeout(() => setSplashDone(true), 3000);
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('message', e => {
         if (e.data === 'UPDATE_READY') setUpdateReady(true);
@@ -478,7 +474,7 @@ function Birdie() {
     setName(n);
     await save(courses, rounds, n);
   };
-  if (!loaded || !splashDone) return /*#__PURE__*/React.createElement(Splash, {fadeOut: loaded && !splashDone});
+  if (!loaded) return null;
   if (!playerName) return /*#__PURE__*/React.createElement(Welcome, {
     onSubmit: saveName
   });
@@ -589,72 +585,6 @@ function Birdie() {
     onSaveName: saveName,
     onBack: () => setView("home")
   }));
-}
-
-// ─── SPLASH ─────────────────────────────────────────────────────
-function Splash(_ref_sp) {
-  let fadeOut = _ref_sp.fadeOut;
-
-  return React.createElement(
-    "div",
-    {
-      style: {
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: "#1a4731",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        opacity: fadeOut ? 0 : 1,
-        transition: "opacity 0.5s ease",
-        zIndex: 9999
-      }
-    },
-    React.createElement(
-      "div",
-      { style: { textAlign: "center" } },
-
-      React.createElement(
-        "div",
-        {
-          style: {
-            fontFamily: "'Cormorant Garamond', serif",
-            fontSize: "56px",
-            fontWeight: 600,
-            color: "#ffffff",
-            lineHeight: 1
-          }
-        },
-        "Fairway"
-      ),
-
-      React.createElement("div", {
-        style: {
-          width: "50px",
-          height: "1px",
-          background: "#c9a84c",
-          margin: "18px auto"
-        }
-      }),
-
-      React.createElement(
-        "div",
-        {
-          style: {
-            fontFamily: "'Source Sans 3', sans-serif",
-            fontSize: "11px",
-            color: "rgba(255,255,255,.55)",
-            letterSpacing: ".18em",
-            textTransform: "uppercase"
-          }
-        },
-        "Score · Track · Improve"
-      )
-    )
-  );
 }
 
 // ─── WELCOME ────────────────────────────────────────────────────
