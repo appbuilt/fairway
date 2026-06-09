@@ -484,6 +484,11 @@ const resetAll = async () => {
     setCourses(nc);
     await save(nc, rounds, playerName);
   };
+  const deleteCourse = async id => {
+  const nc = courses.filter(c => c.id !== id);
+  setCourses(nc);
+  await save(nc, rounds, playerName);
+  };
   const saveName = async n => {
     setName(n);
     await save(courses, rounds, n);
@@ -587,6 +592,7 @@ const resetAll = async () => {
     courses: courses,
     onBack: () => setView("home"),
     onAdd: addCourse,
+    onDelete: deleteCourse,
     onPlay: c => {
       setActiveRound({
         _course: c
@@ -857,7 +863,7 @@ function Home(_ref2) {
     }
   }, [{
     label: "Courses",
-    sub: "Manage courses",
+    sub: "Add & manage courses",
     nav: "courses"
   }, {
     label: "Round History",
@@ -2708,32 +2714,23 @@ function Analytics(_ref14) {
 }
 
 // ─── COURSES ────────────────────────────────────────────────────
+// ─── COURSES ────────────────────────────────────────────────────
 function Courses(_ref16) {
-  let courses = _ref16.courses,
-    onBack = _ref16.onBack,
-    onAdd = _ref16.onAdd,
-    onPlay = _ref16.onPlay;
-  const _useState17 = useState(false),
-    adding = _useState17[0],
-    setAdding = _useState17[1];
-  const _useState18 = useState({
-      name: "",
-      location: "",
-      n: 18
-    }),
-    form = _useState18[0],
-    setForm = _useState18[1];
-  const _useState19 = useState([]),
-    holes = _useState19[0],
-    setHoles = _useState19[1];
-  const init = n => setHoles(Array.from({
-    length: n
-  }, (_, i) => ({
-    num: i + 1,
-    par: 4,
-    yards: 350,
-    strokeindex: i + 1
+  let courses  = _ref16.courses,
+    onBack     = _ref16.onBack,
+    onAdd      = _ref16.onAdd,
+    onDelete   = _ref16.onDelete,
+    onPlay     = _ref16.onPlay;
+
+  const [adding, setAdding]       = useState(false);
+  const [confirmId, setConfirmId] = useState(null); // id of course to delete
+  const [form, setForm]           = useState({ name: "", location: "", n: 18 });
+  const [holes, setHoles]         = useState([]);
+
+  const init = n => setHoles(Array.from({ length: n }, (_, i) => ({
+    num: i + 1, par: 4, yards: 350, strokeindex: i + 1
   })));
+
   const submit = () => {
     onAdd({
       id: "c_" + Date.now(),
@@ -2744,258 +2741,188 @@ function Courses(_ref16) {
       tees: "Custom",
       par: holes.reduce((a, h) => a + h.par, 0),
       totalYards: holes.reduce((a, h) => a + h.yards, 0),
-      slope: null,
-      rating: null,
-      holes
+      slope: null, rating: null, holes
     });
     setAdding(false);
   };
-  return /*#__PURE__*/React.createElement("div", {
-    style: S.screen
-  }, /*#__PURE__*/React.createElement("div", {
-    style: S.header
-  }, /*#__PURE__*/React.createElement("button", {
-    onClick: onBack,
-    style: {
-      background: "none",
-      border: "none",
-      color: "rgba(255,255,255,0.7)",
-      cursor: "pointer",
-      fontSize: 14,
-      fontFamily: "var(--fb)"
-    }
-  }, "Back"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontFamily: "var(--fd)",
-      fontSize: 18,
-      color: "var(--white)",
-      fontWeight: 600
-    }
-  }, "Courses"), /*#__PURE__*/React.createElement("button", {
-    onClick: () => {
-      setAdding(true);
-      init(18);
-    },
-    style: {
-      background: "none",
-      border: "1px solid rgba(255,255,255,0.3)",
-      color: "var(--white)",
-      cursor: "pointer",
-      fontSize: 11,
-      padding: "5px 10px",
-      fontFamily: "var(--fb)",
-      letterSpacing: "0.08em"
-    }
-  }, "Add")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: "0 16px 32px"
-    }
-  }, adding ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(SectionLabel, null, "New Course"), /*#__PURE__*/React.createElement("input", {
-    value: form.name,
-    onChange: e => setForm({
-      ...form,
-      name: e.target.value
-    }),
-    placeholder: "Course name",
-    style: {
-      ...S.input,
-      marginBottom: 8
-    }
-  }), /*#__PURE__*/React.createElement("input", {
-    value: form.location,
-    onChange: e => setForm({
-      ...form,
-      location: e.target.value
-    }),
-    placeholder: "Location",
-    style: {
-      ...S.input,
-      marginBottom: 12
-    }
-  }), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      gap: 8,
-      marginBottom: 12
-    }
-  }, [9, 18].map(n => /*#__PURE__*/React.createElement("button", {
-    key: n,
-    onClick: () => {
-      setForm({
-        ...form,
-        n
-      });
-      init(n);
-    },
-    style: {
-      flex: 1,
-      padding: "10px",
-      border: `1px solid ${form.n === n ? "var(--green)" : "var(--border)"}`,
-      background: form.n === n ? "var(--green)" : "var(--white)",
-      color: form.n === n ? "var(--white)" : "var(--text-2)",
-      cursor: "pointer",
-      fontSize: 13,
-      fontFamily: "var(--fb)"
-    }
-  }, n, " holes"))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      overflowX: "auto",
-      marginBottom: 16
-    }
-  }, /*#__PURE__*/React.createElement("table", {
-    style: {
-      width: "100%",
-      borderCollapse: "collapse",
-      fontSize: 12,
-      fontFamily: "var(--fb)"
-    }
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
-    style: {
-      background: "var(--cream)"
-    }
-  }, ["#", "Par", "Yards", "Stroke Index"].map(h => /*#__PURE__*/React.createElement("th", {
-    key: h,
-    style: {
-      padding: "7px 6px",
-      textAlign: "center",
-      fontSize: 9,
-      textTransform: "uppercase",
-      color: "var(--green)",
-      letterSpacing: "0.1em",
-      fontWeight: 600,
-      borderBottom: "1px solid var(--border)"
-    }
-  }, h)))), /*#__PURE__*/React.createElement("tbody", null, holes.map((h, i) => /*#__PURE__*/React.createElement("tr", {
-    key: i,
-    style: {
-      borderBottom: "1px solid var(--border-lt)"
-    }
-  }, /*#__PURE__*/React.createElement("td", {
-    style: {
-      padding: "6px",
-      textAlign: "center",
-      color: "var(--text-2)"
-    }
-  }, h.num), /*#__PURE__*/React.createElement("td", {
-    style: {
-      padding: "6px",
-      textAlign: "center"
-    }
-  }, /*#__PURE__*/React.createElement("select", {
-    value: h.par,
-    onChange: e => {
-      const d = [...holes];
-      d[i] = {
-        ...d[i],
-        par: +e.target.value
-      };
-      setHoles(d);
-    },
-    style: {
-      background: "var(--white)",
-      color: "var(--text)",
-      border: "1px solid var(--border)",
-      padding: "2px",
-      fontSize: 12,
-      width: 40,
-      fontFamily: "var(--fb)"
-    }
-  }, [3, 4, 5].map(p => /*#__PURE__*/React.createElement("option", {
-    key: p
-  }, p)))), /*#__PURE__*/React.createElement("td", {
-    style: {
-      padding: "6px",
-      textAlign: "center"
-    }
-  }, /*#__PURE__*/React.createElement("input", {
-    type: "number",
-    value: h.yards,
-    onChange: e => {
-      const d = [...holes];
-      d[i] = {
-        ...d[i],
-        yards: +e.target.value
-      };
-      setHoles(d);
-    },
-    style: {
-      background: "var(--white)",
-      color: "var(--text)",
-      border: "1px solid var(--border)",
-      padding: "2px 4px",
-      fontSize: 12,
-      width: 52,
-      textAlign: "center",
-      fontFamily: "var(--fb)"
-    }
-  })), /*#__PURE__*/React.createElement("td", {
-    style: {
-      padding: "6px",
-      textAlign: "center"
-    }
-  }, /*#__PURE__*/React.createElement("input", {
-    type: "number",
-    value: h.strokeindex,
-    onChange: e => {
-      const d = [...holes];
-      d[i] = {
-        ...d[i],
-        strokeindex: +e.target.value
-      };
-      setHoles(d);
-    },
-    style: {
-      background: "var(--white)",
-      color: "var(--text)",
-      border: "1px solid var(--border)",
-      padding: "2px 4px",
-      fontSize: 12,
-      width: 44,
-      textAlign: "center",
-      fontFamily: "var(--fb)"
-    }
-  }))))))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      gap: 8
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    onClick: () => setAdding(false),
-    style: {
-      ...S.btnSecondary,
-      flex: 1
-    }
-  }, "Cancel"), /*#__PURE__*/React.createElement("button", {
-    onClick: submit,
-    disabled: !form.name.trim(),
-    style: {
-      ...S.btnPrimary,
-      flex: 2,
-      opacity: form.name.trim() ? 1 : 0.4
-    }
-  }, "Save Course"))) : courses.map(c => /*#__PURE__*/React.createElement("div", {
-    key: c.id,
-    style: S.listRow
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      flex: 1
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 15,
-      fontWeight: 600,
-      color: "var(--text)",
-      marginBottom: 2
-    }
-  }, c.name), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 14,
-      color: "var(--muted)"
-    }
-  }, c.location, c.established ? ` · Est. ${c.established}` : "", " \xB7 ", c.holes.length, " holes \xB7 Par ", c.par)), /*#__PURE__*/React.createElement("button", {
-    onClick: () => onPlay(c),
-    style: S.playBtn
-  }, "Play")))));
+
+  const courseToDelete = confirmId ? courses.find(c => c.id === confirmId) : null;
+
+  // Confirmation screen
+  if (confirmId && courseToDelete) {
+    return React.createElement("div", { style: S.screen },
+      React.createElement(TopBar, { onBack: () => setConfirmId(null), title: "Remove Course?" }),
+      React.createElement("div", {
+        style: { padding: "40px 24px", display: "flex", flexDirection: "column", gap: 16 }
+      },
+        React.createElement("div", {
+          style: { fontFamily: "var(--fd)", fontSize: 22, fontWeight: 600, color: "var(--text)", lineHeight: 1.3 }
+        }, `Remove "${courseToDelete.name}"?`),
+        React.createElement("div", {
+          style: { fontSize: 14, color: "var(--muted)", lineHeight: 1.65 }
+        }, "This course will be removed from your list. Past rounds played here won't be affected."),
+        React.createElement("button", {
+          onClick: () => { onDelete(confirmId); setConfirmId(null); },
+          style: { ...S.btnPrimary, background: "var(--red)", marginTop: 8 }
+        }, "Yes, remove course"),
+        React.createElement("button", {
+          onClick: () => setConfirmId(null),
+          style: S.btnSecondary
+        }, "Cancel")
+      )
+    );
+  }
+
+  return React.createElement("div", { style: S.screen },
+    // Header
+    React.createElement("div", { style: S.header },
+      React.createElement("button", {
+        onClick: onBack,
+        style: {
+          background: "none", border: "none", color: "rgba(255,255,255,0.7)",
+          cursor: "pointer", fontSize: 14, fontFamily: "var(--fb)"
+        }
+      }, "Back"),
+      React.createElement("div", {
+        style: { fontFamily: "var(--fd)", fontSize: 18, color: "var(--white)", fontWeight: 600 }
+      }, "Courses"),
+      React.createElement("button", {
+        onClick: () => { setAdding(true); init(18); },
+        style: {
+          background: "none", border: "1px solid rgba(255,255,255,0.3)",
+          color: "var(--white)", cursor: "pointer", fontSize: 11,
+          padding: "5px 10px", fontFamily: "var(--fb)", letterSpacing: "0.08em"
+        }
+      }, "Add")
+    ),
+
+    React.createElement("div", { style: { padding: "0 16px 32px" } },
+      adding
+        // ── Add course form (unchanged) ──
+        ? React.createElement(React.Fragment, null,
+            React.createElement(SectionLabel, null, "New Course"),
+            React.createElement("input", {
+              value: form.name,
+              onChange: e => setForm({ ...form, name: e.target.value }),
+              placeholder: "Course name",
+              style: { ...S.input, marginBottom: 8 }
+            }),
+            React.createElement("input", {
+              value: form.location,
+              onChange: e => setForm({ ...form, location: e.target.value }),
+              placeholder: "Location",
+              style: { ...S.input, marginBottom: 12 }
+            }),
+            React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 12 } },
+              [9, 18].map(n => React.createElement("button", {
+                key: n,
+                onClick: () => { setForm({ ...form, n }); init(n); },
+                style: {
+                  flex: 1, padding: "10px",
+                  border: `1px solid ${form.n === n ? "var(--green)" : "var(--border)"}`,
+                  background: form.n === n ? "var(--green)" : "var(--white)",
+                  color: form.n === n ? "var(--white)" : "var(--text-2)",
+                  cursor: "pointer", fontSize: 13, fontFamily: "var(--fb)"
+                }
+              }, n, " holes"))
+            ),
+            React.createElement("div", { style: { overflowX: "auto", marginBottom: 16 } },
+              React.createElement("table", {
+                style: { width: "100%", borderCollapse: "collapse", fontSize: 12, fontFamily: "var(--fb)" }
+              },
+                React.createElement("thead", null,
+                  React.createElement("tr", { style: { background: "var(--cream)" } },
+                    ["#", "Par", "Yards", "Stroke Index"].map(h =>
+                      React.createElement("th", {
+                        key: h,
+                        style: {
+                          padding: "7px 6px", textAlign: "center", fontSize: 9,
+                          textTransform: "uppercase", color: "var(--green)",
+                          letterSpacing: "0.1em", fontWeight: 600,
+                          borderBottom: "1px solid var(--border)"
+                        }
+                      }, h)
+                    )
+                  )
+                ),
+                React.createElement("tbody", null,
+                  holes.map((h, i) => React.createElement("tr", {
+                    key: i, style: { borderBottom: "1px solid var(--border-lt)" }
+                  },
+                    React.createElement("td", { style: { padding: "6px", textAlign: "center", color: "var(--text-2)" } }, h.num),
+                    React.createElement("td", { style: { padding: "6px", textAlign: "center" } },
+                      React.createElement("select", {
+                        value: h.par,
+                        onChange: e => { const d = [...holes]; d[i] = { ...d[i], par: +e.target.value }; setHoles(d); },
+                        style: { background: "var(--white)", color: "var(--text)", border: "1px solid var(--border)", padding: "2px", fontSize: 12, width: 40, fontFamily: "var(--fb)" }
+                      }, [3, 4, 5].map(p => React.createElement("option", { key: p }, p)))
+                    ),
+                    React.createElement("td", { style: { padding: "6px", textAlign: "center" } },
+                      React.createElement("input", {
+                        type: "number", value: h.yards,
+                        onChange: e => { const d = [...holes]; d[i] = { ...d[i], yards: +e.target.value }; setHoles(d); },
+                        style: { background: "var(--white)", color: "var(--text)", border: "1px solid var(--border)", padding: "2px 4px", fontSize: 12, width: 52, textAlign: "center", fontFamily: "var(--fb)" }
+                      })
+                    ),
+                    React.createElement("td", { style: { padding: "6px", textAlign: "center" } },
+                      React.createElement("input", {
+                        type: "number", value: h.strokeindex,
+                        onChange: e => { const d = [...holes]; d[i] = { ...d[i], strokeindex: +e.target.value }; setHoles(d); },
+                        style: { background: "var(--white)", color: "var(--text)", border: "1px solid var(--border)", padding: "2px 4px", fontSize: 12, width: 44, textAlign: "center", fontFamily: "var(--fb)" }
+                      })
+                    )
+                  ))
+                )
+              )
+            ),
+            React.createElement("div", { style: { display: "flex", gap: 8 } },
+              React.createElement("button", { onClick: () => setAdding(false), style: { ...S.btnSecondary, flex: 1 } }, "Cancel"),
+              React.createElement("button", {
+                onClick: submit, disabled: !form.name.trim(),
+                style: { ...S.btnPrimary, flex: 2, opacity: form.name.trim() ? 1 : 0.4 }
+              }, "Save Course")
+            )
+          )
+
+        // ── Course list ──
+        : courses.map(c => {
+            const isCustom = c.id.startsWith("c_");
+            return React.createElement("div", {
+              key: c.id,
+              style: { ...S.listRow, alignItems: "center" }
+            },
+              React.createElement("div", { style: { flex: 1 } },
+                React.createElement("div", {
+                  style: { fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 2 }
+                }, c.name),
+                React.createElement("div", {
+                  style: { fontSize: 14, color: "var(--muted)" }
+                }, c.location, c.established ? ` · Est. ${c.established}` : "", ` · ${c.holes.length} holes · Par ${c.par}`)
+              ),
+              React.createElement("button", {
+                onClick: () => onPlay(c),
+                style: S.playBtn
+              }, "Play"),
+              isCustom && React.createElement("button", {
+                onClick: () => setConfirmId(c.id),
+                style: {
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "6px",
+                  marginLeft: 4,
+                  color: "var(--border)",
+                  fontSize: 16,
+                  lineHeight: 1,
+                  display: "flex",
+                  alignItems: "center"
+                },
+                title: "Remove course"
+              }, "✕")
+            );
+          })
+    )
+  );
 }
 
 // ─── PROFILE ────────────────────────────────────────────────────
