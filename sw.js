@@ -1,4 +1,4 @@
-const CACHE = 'fairway-v14';
+const CACHE = 'fairway-v15';
 const ASSETS = [
   './index.html', './app.js', './icon-192.png', './icon-512.png',
   'https://unpkg.com/react@18/umd/react.production.min.js',
