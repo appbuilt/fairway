@@ -1,105 +1,103 @@
 // ─── COURSE DATA ────────────────────────────────────────────────
 const PRELOADED_COURSES = [{
-  id: "rcgc",
-  name: "Royal Calcutta Golf Club",
-  shortName: "RCGC",
-  location: "Tollygunge, Kolkata",
-  established: 1829,
+  id: "wdc",
+  name: "Western Dooars Golf Course",
+  shortName: "WDC",
+  location: "Ranicherra Tea Garden, Dooars",
   par: 72,
-  totalYards: 7101,
-  slope: 138,
-  rating: 75.3,
-  tees: "Blue",
+  totalYards: 6562,
   holes: [{
     num: 1,
     par: 4,
-    yards: 359,
-    hcp: 11
+    yards: 350,
+    strokeindex: 12
   }, {
     num: 2,
-    par: 3,
-    yards: 154,
-    hcp: 17
+    par: 4,
+    yards: 450,
+    strokeindex: 4
+    
   }, {
     num: 3,
     par: 4,
-    yards: 442,
-    hcp: 3
+    yards: 420,
+    strokeindex: 6
   }, {
     num: 4,
-    par: 5,
-    yards: 520,
-    hcp: 13
+    par: 4,
+    yards: 350,
+    strokeindex: 10
   }, {
     num: 5,
     par: 4,
-    yards: 410,
-    hcp: 9
+    yards: 340,
+    strokeindex: 14
   }, {
     num: 6,
-    par: 4,
-    yards: 425,
-    hcp: 5
+    par: 5,
+    yards: 500,
+    strokeindex: 2
+
   }, {
     num: 7,
-    par: 4,
-    yards: 420,
-    hcp: 1
+    par: 3,
+    yards: 215,
+    strokeindex: 16
   }, {
     num: 8,
-    par: 4,
-    yards: 401,
-    hcp: 15
+    par: 5,
+    yards: 480,
+    strokeindex: 8
   }, {
     num: 9,
-    par: 4,
-    yards: 414,
-    hcp: 7
+    par: 3,
+    yards: 126,
+    strokeindex: 18
   }, {
     num: 10,
     par: 4,
-    yards: 436,
-    hcp: 2
+    yards: 350,
+    strokeindex: 11
   }, {
     num: 11,
-    par: 4,
-    yards: 431,
-    hcp: 8
+    par: 5,
+    yards: 495,
+    strokeindex: 3
   }, {
     num: 12,
     par: 4,
-    yards: 365,
-    hcp: 14
+    yards: 444,
+    strokeindex: 7
   }, {
     num: 13,
-    par: 3,
-    yards: 233,
-    hcp: 16
+    par: 4,
+    yards: 371,
+    strokeindex: 9
   }, {
     num: 14,
     par: 4,
-    yards: 415,
-    hcp: 4
+    yards: 355,
+    strokeindex: 13
   }, {
     num: 15,
     par: 5,
-    yards: 503,
-    hcp: 12
+    yards: 515,
+    strokeindex: 1
   }, {
     num: 16,
-    par: 4,
-    yards: 354,
-    hcp: 18
+    par: 3,
+    yards: 224,
+    strokeindex: 15
   }, {
     num: 17,
     par: 4,
-    yards: 382,
-    hcp: 10
+    yards: 458,
+    strokeindex: 5
   }, {
     num: 18,
-    par: 4,
-    yards: 437,
-    hcp: 6
+    par: 3,
+    yards: 120,
+    strokeindex: 17
   }]
 }, {
   id: "tolly",
@@ -116,92 +114,92 @@ const PRELOADED_COURSES = [{
     num: 1,
     par: 4,
     yards: 404,
-    hcp: 7
+    strokeindex: 7
   }, {
     num: 2,
     par: 3,
     yards: 170,
-    hcp: 17
+    strokeindex: 17
   }, {
     num: 3,
     par: 4,
     yards: 414,
-    hcp: 1
+    strokeindex: 1
   }, {
     num: 4,
     par: 4,
     yards: 398,
-    hcp: 11
+    strokeindex: 11
   }, {
     num: 5,
     par: 4,
     yards: 403,
-    hcp: 3
+    strokeindex: 3
   }, {
     num: 6,
     par: 3,
     yards: 215,
-    hcp: 13
+    strokeindex: 13
   }, {
     num: 7,
     par: 5,
     yards: 491,
-    hcp: 9
+    strokeindex: 9
   }, {
     num: 8,
     par: 3,
     yards: 177,
-    hcp: 15
+    strokeindex: 15
   }, {
     num: 9,
     par: 4,
     yards: 433,
-    hcp: 5
+    strokeindex: 5
   }, {
     num: 10,
     par: 5,
     yards: 509,
-    hcp: 14
+    strokeindex: 14
   }, {
     num: 11,
     par: 3,
     yards: 174,
-    hcp: 16
+    strokeindex: 16
   }, {
     num: 12,
     par: 4,
     yards: 369,
-    hcp: 10
+    strokeindex: 10
   }, {
     num: 13,
     par: 5,
     yards: 497,
-    hcp: 4
+    strokeindex: 4
   }, {
     num: 14,
     par: 4,
     yards: 356,
-    hcp: 12
+    strokeindex: 12
   }, {
     num: 15,
     par: 4,
     yards: 310,
-    hcp: 6
+    strokeindex: 6
   }, {
     num: 16,
     par: 4,
     yards: 391,
-    hcp: 2
+    strokeindex: 2
   }, {
     num: 17,
     par: 4,
     yards: 368,
-    hcp: 8
+    strokeindex: 8
   }, {
     num: 18,
     par: 3,
     yards: 202,
-    hcp: 18
+    strokeindex: 18
   }]
 }, {
   id: "fortw",
@@ -218,92 +216,92 @@ const PRELOADED_COURSES = [{
     num: 1,
     par: 4,
     yards: 385,
-    hcp: 5
+    strokeindex: 5
   }, {
     num: 2,
     par: 4,
     yards: 360,
-    hcp: 9
+    strokeindex: 9
   }, {
     num: 3,
     par: 3,
     yards: 165,
-    hcp: 15
+    strokeindex: 15
   }, {
     num: 4,
     par: 5,
     yards: 510,
-    hcp: 1
+    strokeindex: 1
   }, {
     num: 5,
     par: 4,
     yards: 370,
-    hcp: 7
+    strokeindex: 7
   }, {
     num: 6,
     par: 3,
     yards: 175,
-    hcp: 17
+    strokeindex: 17
   }, {
     num: 7,
     par: 4,
     yards: 395,
-    hcp: 3
+    strokeindex: 3
   }, {
     num: 8,
     par: 4,
     yards: 340,
-    hcp: 13
+    strokeindex: 13
   }, {
     num: 9,
     par: 4,
     yards: 355,
-    hcp: 11
+    strokeindex: 11
   }, {
     num: 10,
     par: 4,
     yards: 380,
-    hcp: 4
+    strokeindex: 4
   }, {
     num: 11,
     par: 5,
     yards: 490,
-    hcp: 10
+    strokeindex: 10
   }, {
     num: 12,
     par: 3,
     yards: 155,
-    hcp: 18
+    strokeindex: 18
   }, {
     num: 13,
     par: 4,
     yards: 365,
-    hcp: 6
+    strokeindex: 6
   }, {
     num: 14,
     par: 4,
     yards: 350,
-    hcp: 12
+    strokeindex: 12
   }, {
     num: 15,
     par: 4,
     yards: 400,
-    hcp: 2
+    strokeindex: 2
   }, {
     num: 16,
     par: 5,
     yards: 505,
-    hcp: 8
+    strokeindex: 8
   }, {
     num: 17,
     par: 3,
     yards: 170,
-    hcp: 16
+    strokeindex: 16
   }, {
     num: 18,
     par: 4,
     yards: 310,
-    hcp: 14
+    strokeindex: 14
   }]
 }];
 const KEY = "birdie-v3";
@@ -405,6 +403,9 @@ function Birdie() {
   const _useState8 = useState(false),
     splashDone = _useState8[0],
     setSplashDone = _useState8[1];
+  const _useState9 = useState(false),
+    updateReady = _useState9[0],
+    setUpdateReady = _useState9[1];
   useEffect(() => {
     (async () => {
       try {
@@ -422,8 +423,25 @@ function Birdie() {
       } catch {}
       setLoaded(true);
     })();
-    // Splash shows for exactly 3 seconds
     setTimeout(() => setSplashDone(true), 3000);
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', e => {
+        if (e.data === 'UPDATE_READY') setUpdateReady(true);
+      });
+      navigator.serviceWorker.getRegistration().then(reg => {
+        if (reg && reg.waiting) setUpdateReady(true);
+        if (reg) {
+          reg.addEventListener('updatefound', () => {
+            const nw = reg.installing;
+            if (nw) nw.addEventListener('statechange', () => {
+              if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                setUpdateReady(true);
+              }
+            });
+          });
+        }
+      });
+    }
   }, []);
   const save = useCallback(async (c, r, p) => {
     try {
@@ -460,15 +478,31 @@ function Birdie() {
     setName(n);
     await save(courses, rounds, n);
   };
-  if (!loaded || !splashDone) return /*#__PURE__*/React.createElement(Splash, {
-    fadeOut: loaded && !splashDone
-  });
+  if (!loaded || !splashDone) return /*#__PURE__*/React.createElement(Splash, {fadeOut: loaded && !splashDone});
   if (!playerName) return /*#__PURE__*/React.createElement(Welcome, {
     onSubmit: saveName
   });
   return /*#__PURE__*/React.createElement("div", {
     style: S.app
-  }, /*#__PURE__*/React.createElement("style", null, CSS), view === "home" && /*#__PURE__*/React.createElement(Home, {
+  }, /*#__PURE__*/React.createElement("style", null, CSS), updateReady && /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "fixed", top: 0, left: 0, right: 0, zIndex: 999,
+      background: "var(--gold-dec)", padding: "12px 16px",
+      display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12
+    }
+  },
+  /*#__PURE__*/React.createElement("div", {
+    style: {fontSize: 13, color: "#1a1915", fontFamily: "var(--fb)", fontWeight: 500, lineHeight: 1.4}
+  }, "Fairway has been updated"),
+  /*#__PURE__*/React.createElement("button", {
+    onClick: () => window.location.reload(),
+    style: {
+      background: "var(--green)", color: "var(--white)", border: "none",
+      padding: "8px 16px", borderRadius: "var(--r)", fontSize: 12, fontWeight: 600,
+      fontFamily: "var(--fb)", letterSpacing: "0.06em", cursor: "pointer",
+      textTransform: "uppercase", flexShrink: 0
+    }
+  }, "Tap to reload")), view === "home" && /*#__PURE__*/React.createElement(Home, {
     playerName: playerName,
     rounds: rounds,
     courses: courses,
@@ -506,7 +540,7 @@ function Birdie() {
           num: h.num,
           par: h.par,
           yards: h.yards,
-          hcp: h.hcp,
+          strokeindex: h.strokeindex,
           scores: Object.fromEntries(players.map(p => [p.id, emptyScore()]))
         }))
       });
@@ -558,105 +592,51 @@ function Birdie() {
 }
 
 // ─── SPLASH ─────────────────────────────────────────────────────
-function Splash(_ref) {
-  let fadeOut = _ref.fadeOut;
+function Splash(_ref_sp) {
+  let fadeOut = _ref_sp.fadeOut;
   return /*#__PURE__*/React.createElement("div", {
     style: {
-      ...S.app,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: "100vh",
-      background: "var(--green)",
+      position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      background: "#1a4731",
       transition: "opacity 0.5s ease",
-      opacity: fadeOut ? 0 : 1
+      opacity: fadeOut ? 0 : 1,
+      zIndex: 9999
     }
-  }, /*#__PURE__*/React.createElement("style", null, CSS, splashCSS), /*#__PURE__*/React.createElement("div", {
-    style: {
-      textAlign: "center"
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "splash-fade-in",
-    style: {
-      fontFamily: "var(--fd)",
-      fontSize: 52,
-      color: "var(--white)",
-      fontWeight: 600,
-      letterSpacing: "0.01em",
-      lineHeight: 1
-    }
-  }, "Fairway"), /*#__PURE__*/React.createElement("div", {
-    className: "splash-line",
-    style: {
-      height: 1,
-      background: "var(--gold-dec)",
-      margin: "16px auto",
-      width: 0
-    }
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "splash-tagline",
-    style: {
-      fontSize: 11,
-      color: "rgba(255,255,255,0.45)",
-      letterSpacing: "0.18em",
-      textTransform: "uppercase",
-      fontFamily: "var(--fb)"
-    }
-  }, "Score \xB7 Track \xB7 Improve"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      gap: 6,
-      justifyContent: "center",
-      marginTop: 40
-    }
-  }, [0, 1, 2].map(i => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "splash-dot",
-    style: {
-      width: 5,
-      height: 5,
-      borderRadius: "50%",
-      background: "rgba(255,255,255,0.3)",
-      animationDelay: `${i * 0.2}s`
-    }
-  })))));
+  },
+  /*#__PURE__*/React.createElement("style", null, `
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Source+Sans+3:wght@400&display=swap');
+    @keyframes spFadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes spLine   { from{width:0} to{width:40px} }
+    @keyframes spDot    { 0%,80%,100%{opacity:.3;transform:scale(1)} 40%{opacity:1;transform:scale(1.4)} }
+    .sp-word { font-family:'Cormorant Garamond',Georgia,serif; font-size:52px; font-weight:600; color:#fff;
+               letter-spacing:.01em; line-height:1; animation:spFadeIn .8s ease forwards; opacity:0; }
+    .sp-line { height:1px; background:#c9a84c; margin:16px auto;
+               animation:spLine .8s ease .4s forwards; width:0; }
+    .sp-tag  { font-family:'Source Sans 3',sans-serif; font-size:11px; color:rgba(255,255,255,.45);
+               letter-spacing:.18em; text-transform:uppercase;
+               animation:spFadeIn .8s ease .7s forwards; opacity:0; }
+    .sp-dot  { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.3);
+               animation:spDot 1.2s ease-in-out infinite; }
+  `),
+  /*#__PURE__*/React.createElement("div", {style:{textAlign:"center"}},
+    /*#__PURE__*/React.createElement("div", {className:"sp-word"}, "Fairway"),
+    /*#__PURE__*/React.createElement("div", {className:"sp-line"}),
+    /*#__PURE__*/React.createElement("div", {className:"sp-tag"}, "Score · Track · Improve"),
+    /*#__PURE__*/React.createElement("div", {style:{display:"flex",gap:6,justifyContent:"center",marginTop:40}},
+      [0,1,2].map(i => /*#__PURE__*/React.createElement("div", {
+        key: i, className:"sp-dot", style:{animationDelay:`${i*0.2}s`}
+      }))
+    )
+  ));
 }
-const splashCSS = `
-  @keyframes splashFadeIn {
-    from { opacity:0; transform:translateY(8px); }
-    to   { opacity:1; transform:translateY(0); }
-  }
-  @keyframes splashLine {
-    from { width:0; }
-    to   { width:40px; }
-  }
-  @keyframes splashDot {
-    0%, 80%, 100% { opacity:0.3; transform:scale(1); }
-    40%           { opacity:1;   transform:scale(1.3); }
-  }
-  .splash-fade-in {
-    animation: splashFadeIn 0.8s ease forwards;
-    opacity: 0;
-  }
-  .splash-line {
-    animation: splashLine 0.8s ease 0.4s forwards;
-    width: 0 !important;
-  }
-  .splash-tagline {
-    animation: splashFadeIn 0.8s ease 0.7s forwards;
-    opacity: 0;
-  }
-  .splash-dot {
-    animation: splashDot 1.2s ease-in-out infinite;
-  }
-`;
 
 // ─── WELCOME ────────────────────────────────────────────────────
-function Welcome(_ref2) {
-  let onSubmit = _ref2.onSubmit;
-  const _useState9 = useState(""),
-    name = _useState9[0],
-    setName = _useState9[1];
+function Welcome(_ref) {
+  let onSubmit = _ref.onSubmit;
+  const _useState8 = useState(""),
+    name = _useState8[0],
+    setName = _useState8[1];
   return /*#__PURE__*/React.createElement("div", {
     style: {
       ...S.app,
@@ -750,13 +730,13 @@ function Welcome(_ref2) {
 }
 
 // ─── HOME ───────────────────────────────────────────────────────
-function Home(_ref3) {
-  let playerName = _ref3.playerName,
-    rounds = _ref3.rounds,
-    courses = _ref3.courses,
-    onNav = _ref3.onNav,
-    onStartSetup = _ref3.onStartSetup,
-    onSelectRound = _ref3.onSelectRound;
+function Home(_ref2) {
+  let playerName = _ref2.playerName,
+    rounds = _ref2.rounds,
+    courses = _ref2.courses,
+    onNav = _ref2.onNav,
+    onStartSetup = _ref2.onStartSetup,
+    onSelectRound = _ref2.onSelectRound;
   const done = rounds.filter(r => r.completed);
   const last = done[done.length - 1];
   const p0id = r => r.players[0].id;
@@ -904,10 +884,6 @@ function Home(_ref3) {
       gap: 1
     }
   }, [{
-    label: "Courses",
-    sub: "Manage courses",
-    nav: "courses"
-  }, {
     label: "Round History",
     sub: "View past rounds",
     nav: "history"
@@ -916,13 +892,17 @@ function Home(_ref3) {
     sub: "Stats & insights",
     nav: "analytics"
   }, {
+    label: "Courses",
+    sub: "Manage courses",
+    nav: "courses"
+  }, {
     label: "Profile",
     sub: "Settings",
     nav: "profile"
-  }].map(_ref4 => {
-    let label = _ref4.label,
-      sub = _ref4.sub,
-      nav = _ref4.nav;
+  }].map(_ref3 => {
+    let label = _ref3.label,
+      sub = _ref3.sub,
+      nav = _ref3.nav;
     return /*#__PURE__*/React.createElement("button", {
       key: nav,
       onClick: () => onNav(nav),
@@ -943,10 +923,10 @@ function Home(_ref3) {
     }, sub));
   })));
 }
-function StatCard(_ref5) {
-  let val = _ref5.val,
-    label = _ref5.label,
-    accent = _ref5.accent;
+function StatCard(_ref4) {
+  let val = _ref4.val,
+    label = _ref4.label,
+    accent = _ref4.accent;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
@@ -974,8 +954,8 @@ function StatCard(_ref5) {
     }
   }, label));
 }
-function SectionLabel(_ref6) {
-  let children = _ref6.children;
+function SectionLabel(_ref5) {
+  let children = _ref5.children;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "18px 16px 10px",
@@ -1002,25 +982,25 @@ function SectionLabel(_ref6) {
 }
 
 // ─── SETUP ──────────────────────────────────────────────────────
-function Setup(_ref7) {
-  let course = _ref7.course,
-    ownerName = _ref7.ownerName,
-    onBack = _ref7.onBack,
-    onStart = _ref7.onStart;
-  const _useState0 = useState([{
+function Setup(_ref6) {
+  let course = _ref6.course,
+    ownerName = _ref6.ownerName,
+    onBack = _ref6.onBack,
+    onStart = _ref6.onStart;
+  const _useState9 = useState([{
       id: pid(),
       name: ownerName,
       isOwner: true
     }]),
-    players = _useState0[0],
-    setPlayers = _useState0[1];
-  const _useState1 = useState(""),
-    newName = _useState1[0],
-    setNewName = _useState1[1];
+    players = _useState9[0],
+    setPlayers = _useState9[1];
+  const _useState0 = useState(""),
+    newName = _useState0[0],
+    setNewName = _useState0[1];
   const maxH = course.holes.length;
-  const _useState10 = useState(maxH >= 18 ? 9 : maxH),
-    hc = _useState10[0],
-    setHc = _useState10[1];
+  const _useState1 = useState(maxH >= 18 ? 9 : maxH),
+    hc = _useState1[0],
+    setHc = _useState1[1];
   const selPar = course.holes.slice(0, hc).reduce((a, h) => a + h.par, 0);
   const add = () => {
     if (!newName.trim()) return;
@@ -1191,10 +1171,10 @@ function Setup(_ref7) {
 }
 
 // ─── SCORE PILLS ────────────────────────────────────────────────
-function ScorePills(_ref8) {
-  let value = _ref8.value,
-    par = _ref8.par,
-    onChange = _ref8.onChange;
+function ScorePills(_ref7) {
+  let value = _ref7.value,
+    par = _ref7.par,
+    onChange = _ref7.onChange;
   const min = Math.max(1, par - 2);
   const max = par + 5;
   const nums = Array.from({
@@ -1255,24 +1235,24 @@ function ScorePills(_ref8) {
 }
 
 // ─── SCORING ────────────────────────────────────────────────────
-function Scoring(_ref9) {
-  let round = _ref9.round,
-    onUpdate = _ref9.onUpdate,
-    onFinish = _ref9.onFinish,
-    onBack = _ref9.onBack,
-    allRounds = _ref9.allRounds;
-  const _useState11 = useState(0),
-    holeIdx = _useState11[0],
-    setHoleIdx = _useState11[1];
-  const _useState12 = useState(round.players[0].id),
-    expandedP = _useState12[0],
-    setExpP = _useState12[1];
+function Scoring(_ref8) {
+  let round = _ref8.round,
+    onUpdate = _ref8.onUpdate,
+    onFinish = _ref8.onFinish,
+    onBack = _ref8.onBack,
+    allRounds = _ref8.allRounds;
+  const _useState10 = useState(0),
+    holeIdx = _useState10[0],
+    setHoleIdx = _useState10[1];
+  const _useState11 = useState(round.players[0].id),
+    expandedP = _useState11[0],
+    setExpP = _useState11[1];
+  const _useState12 = useState(false),
+    showBoard = _useState12[0],
+    setBoard = _useState12[1];
   const _useState13 = useState(false),
-    showBoard = _useState13[0],
-    setBoard = _useState13[1];
-  const _useState14 = useState(false),
-    showGIR = _useState14[0],
-    setGIR = _useState14[1];
+    showGIR = _useState13[0],
+    setGIR = _useState13[1];
   const hole = round.holes[holeIdx];
   const total = round.holes.length;
   const updateScore = (pid, field, val) => {
@@ -1450,7 +1430,7 @@ function Scoring(_ref9) {
       display: "flex",
       gap: 6
     }
-  }, [`Par ${hole.par}`, `${hole.yards} yds`, `HCP ${hole.hcp}`].map(t => /*#__PURE__*/React.createElement("div", {
+  }, [`Par ${hole.par}`, `${hole.yards} yds`, `Stroke Index ${hole.strokeindex}`].map(t => /*#__PURE__*/React.createElement("div", {
     key: t,
     style: {
       padding: "6px 12px",
@@ -1709,9 +1689,9 @@ function Scoring(_ref9) {
     }
   }, allDone ? "Finish" : "—")));
 }
-function YesNo(_ref0) {
-  let value = _ref0.value,
-    onChange = _ref0.onChange;
+function YesNo(_ref9) {
+  let value = _ref9.value,
+    onChange = _ref9.onChange;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
@@ -1723,9 +1703,9 @@ function YesNo(_ref0) {
   }, {
     v: false,
     l: "No"
-  }].map(_ref1 => {
-    let v = _ref1.v,
-      l = _ref1.l;
+  }].map(_ref0 => {
+    let v = _ref0.v,
+      l = _ref0.l;
     const sel = value === v;
     return /*#__PURE__*/React.createElement("button", {
       key: l,
@@ -1746,9 +1726,9 @@ function YesNo(_ref0) {
     }, l);
   }));
 }
-function FieldLabel(_ref10) {
-  let children = _ref10.children,
-    style = _ref10.style;
+function FieldLabel(_ref1) {
+  let children = _ref1.children,
+    style = _ref1.style;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 10,
@@ -1809,11 +1789,11 @@ function computeInsight(allRounds, courseId, holeNum, holePar) {
     text
   };
 }
-function HoleInsight(_ref11) {
-  let insight = _ref11.insight;
-  const _useState15 = useState(false),
-    open = _useState15[0],
-    setOpen = _useState15[1];
+function HoleInsight(_ref10) {
+  let insight = _ref10.insight;
+  const _useState14 = useState(false),
+    open = _useState14[0],
+    setOpen = _useState14[1];
   const dotColor = !(insight != null && insight.enough) ? "var(--border-lt)" : insight.conf === "strong" ? "var(--green)" : insight.conf === "watch" ? "#c89a2a" : "var(--red)";
   const confLabel = !(insight != null && insight.enough) ? null : insight.conf === "strong" ? "Strong hole" : insight.conf === "watch" ? "Watch this one" : "Tough hole";
   return /*#__PURE__*/React.createElement("div", {
@@ -1858,15 +1838,10 @@ function HoleInsight(_ref11) {
     }
   }, "\u2014 ", confLabel)), /*#__PURE__*/React.createElement("div", {
     style: {
-      fontSize: 12,
-      color: "var(--green)",
-      fontWeight: 600,
-      letterSpacing: "0.06em",
-      textTransform: "uppercase",
-      fontFamily: "var(--fb)",
-      flexShrink: 0
+      fontSize: 14,
+      color: "var(--muted)"
     }
-  }, open ? "Close" : "View")), open && /*#__PURE__*/React.createElement("div", {
+  }, open ? "▲" : "▼")), open && /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "0 16px 16px"
     }
@@ -1895,9 +1870,9 @@ function HoleInsight(_ref11) {
   }] : []), ...(insight.avgPutts !== null ? [{
     l: "Putts",
     v: insight.avgPutts
-  }] : [])].map(_ref12 => {
-    let l = _ref12.l,
-      v = _ref12.v;
+  }] : [])].map(_ref11 => {
+    let l = _ref11.l,
+      v = _ref11.v;
     return /*#__PURE__*/React.createElement("div", {
       key: l,
       style: {
@@ -1940,14 +1915,14 @@ function HoleInsight(_ref11) {
 }
 
 // ─── SUMMARY ────────────────────────────────────────────────────
-function Summary(_ref13) {
-  let round = _ref13.round,
-    allRounds = _ref13.allRounds,
-    onNavigate = _ref13.onNavigate,
-    onBack = _ref13.onBack;
-  const _useState16 = useState(round.players[0].id),
-    activeP = _useState16[0],
-    setActiveP = _useState16[1];
+function Summary(_ref12) {
+  let round = _ref12.round,
+    allRounds = _ref12.allRounds,
+    onNavigate = _ref12.onNavigate,
+    onBack = _ref12.onBack;
+  const _useState15 = useState(round.players[0].id),
+    activeP = _useState15[0],
+    setActiveP = _useState15[1];
 
   // Prev / next round navigation
   const idx = (allRounds == null ? void 0 : allRounds.findIndex(r => r.id === round.id)) ?? -1;
@@ -2356,11 +2331,11 @@ function Summary(_ref13) {
 }
 
 // ─── HISTORY ────────────────────────────────────────────────────
-function History(_ref14) {
-  let rounds = _ref14.rounds,
-    onBack = _ref14.onBack,
-    onSelect = _ref14.onSelect,
-    onDelete = _ref14.onDelete;
+function History(_ref13) {
+  let rounds = _ref13.rounds,
+    onBack = _ref13.onBack,
+    onSelect = _ref13.onSelect,
+    onDelete = _ref13.onDelete;
   const done = [...rounds].filter(r => r.completed).reverse();
   return /*#__PURE__*/React.createElement("div", {
     style: S.screen
@@ -2440,14 +2415,14 @@ function History(_ref14) {
 }
 
 // ─── ANALYTICS ──────────────────────────────────────────────────
-function Analytics(_ref15) {
-  let rounds = _ref15.rounds,
-    courses = _ref15.courses,
-    playerName = _ref15.playerName,
-    onBack = _ref15.onBack;
-  const _useState17 = useState("overview"),
-    tab = _useState17[0],
-    setTab = _useState17[1];
+function Analytics(_ref14) {
+  let rounds = _ref14.rounds,
+    courses = _ref14.courses,
+    playerName = _ref14.playerName,
+    onBack = _ref14.onBack;
+  const _useState16 = useState("overview"),
+    tab = _useState16[0],
+    setTab = _useState16[1];
   const done = rounds.filter(r => r.completed);
   const UNLOCK = 5;
   if (done.length < 2) return /*#__PURE__*/React.createElement("div", {
@@ -2648,9 +2623,9 @@ function Analytics(_ref15) {
       day: "numeric",
       month: "short"
     })));
-  }))), /*#__PURE__*/React.createElement(SectionLabel, null, "By Course"), Object.entries(byCourse).map(_ref16 => {
-    let cid = _ref16[0],
-      rs = _ref16[1];
+  }))), /*#__PURE__*/React.createElement(SectionLabel, null, "By Course"), Object.entries(byCourse).map(_ref15 => {
+    let cid = _ref15[0],
+      rs = _ref15[1];
     const c = courses.find(x => x.id === cid);
     const a = Math.round(rs.reduce((x, r) => x + r.total, 0) / rs.length);
     const b = Math.min(...rs.map(r => r.total));
@@ -2761,31 +2736,31 @@ function Analytics(_ref15) {
 }
 
 // ─── COURSES ────────────────────────────────────────────────────
-function Courses(_ref17) {
-  let courses = _ref17.courses,
-    onBack = _ref17.onBack,
-    onAdd = _ref17.onAdd,
-    onPlay = _ref17.onPlay;
-  const _useState18 = useState(false),
-    adding = _useState18[0],
-    setAdding = _useState18[1];
-  const _useState19 = useState({
+function Courses(_ref16) {
+  let courses = _ref16.courses,
+    onBack = _ref16.onBack,
+    onAdd = _ref16.onAdd,
+    onPlay = _ref16.onPlay;
+  const _useState17 = useState(false),
+    adding = _useState17[0],
+    setAdding = _useState17[1];
+  const _useState18 = useState({
       name: "",
       location: "",
       n: 18
     }),
-    form = _useState19[0],
-    setForm = _useState19[1];
-  const _useState20 = useState([]),
-    holes = _useState20[0],
-    setHoles = _useState20[1];
+    form = _useState18[0],
+    setForm = _useState18[1];
+  const _useState19 = useState([]),
+    holes = _useState19[0],
+    setHoles = _useState19[1];
   const init = n => setHoles(Array.from({
     length: n
   }, (_, i) => ({
     num: i + 1,
     par: 4,
     yards: 350,
-    hcp: i + 1
+    strokeindex: i + 1
   })));
   const submit = () => {
     onAdd({
@@ -2906,7 +2881,7 @@ function Courses(_ref17) {
     style: {
       background: "var(--cream)"
     }
-  }, ["#", "Par", "Yards", "HCP"].map(h => /*#__PURE__*/React.createElement("th", {
+  }, ["#", "Par", "Yards", "Stroke Index"].map(h => /*#__PURE__*/React.createElement("th", {
     key: h,
     style: {
       padding: "7px 6px",
@@ -2988,12 +2963,12 @@ function Courses(_ref17) {
     }
   }, /*#__PURE__*/React.createElement("input", {
     type: "number",
-    value: h.hcp,
+    value: h.strokeindex,
     onChange: e => {
       const d = [...holes];
       d[i] = {
         ...d[i],
-        hcp: +e.target.value
+        strokeindex: +e.target.value
       };
       setHoles(d);
     },
@@ -3052,17 +3027,17 @@ function Courses(_ref17) {
 }
 
 // ─── PROFILE ────────────────────────────────────────────────────
-function Profile(_ref18) {
-  let playerName = _ref18.playerName,
-    rounds = _ref18.rounds,
-    onSaveName = _ref18.onSaveName,
-    onBack = _ref18.onBack;
-  const _useState21 = useState(false),
-    editing = _useState21[0],
-    setEditing = _useState21[1];
-  const _useState22 = useState(playerName),
-    name = _useState22[0],
-    setName = _useState22[1];
+function Profile(_ref17) {
+  let playerName = _ref17.playerName,
+    rounds = _ref17.rounds,
+    onSaveName = _ref17.onSaveName,
+    onBack = _ref17.onBack;
+  const _useState20 = useState(false),
+    editing = _useState20[0],
+    setEditing = _useState20[1];
+  const _useState21 = useState(playerName),
+    name = _useState21[0],
+    setName = _useState21[1];
   const done = rounds.filter(r => r.completed);
   const best = done.length ? Math.min(...done.map(r => playerTotal(r, r.players[0].id))) : null;
   return /*#__PURE__*/React.createElement("div", {
@@ -3167,9 +3142,9 @@ function Profile(_ref18) {
 }
 
 // ─── SHARED COMPONENTS ──────────────────────────────────────────
-function TopBar(_ref19) {
-  let onBack = _ref19.onBack,
-    title = _ref19.title;
+function TopBar(_ref18) {
+  let onBack = _ref18.onBack,
+    title = _ref18.title;
   return /*#__PURE__*/React.createElement("div", {
     style: S.header
   }, /*#__PURE__*/React.createElement("button", {
@@ -3198,8 +3173,8 @@ function TopBar(_ref19) {
     }
   }));
 }
-function Empty(_ref20) {
-  let msg = _ref20.msg;
+function Empty(_ref19) {
+  let msg = _ref19.msg;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "64px 24px",
