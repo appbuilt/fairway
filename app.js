@@ -1798,7 +1798,7 @@ function HoleInsight(_ref10) {
       fontSize: 14,
       color: "var(--muted)"
     }
-  }, open ? "▲" : "▼")), open && /*#__PURE__*/React.createElement("div", {
+  }, open ? "Close" : "View")), open && /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "0 16px 16px"
     }
