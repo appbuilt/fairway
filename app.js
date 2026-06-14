@@ -421,21 +421,32 @@ function Birdie() {
       setLoaded(true);
     })();
     if ('serviceWorker' in navigator) {
+      // Listen for message from SW (fires when SW activates while page is open)
       navigator.serviceWorker.addEventListener('message', e => {
         if (e.data === 'UPDATE_READY') setUpdateReady(true);
       });
+      // Check on every page load — covers cold open after SW already activated
       navigator.serviceWorker.getRegistration().then(reg => {
-        if (reg && reg.waiting) setUpdateReady(true);
-        if (reg) {
-          reg.addEventListener('updatefound', () => {
-            const nw = reg.installing;
-            if (nw) nw.addEventListener('statechange', () => {
-              if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-                setUpdateReady(true);
-              }
-            });
+        if (!reg) return;
+        // A waiting SW means an update installed but hasn't activated yet
+        if (reg.waiting) { setUpdateReady(true); return; }
+        // If the active SW is newer than what was controlling before, show banner
+        // We detect this by checking if controller just changed (controllerchange)
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          setUpdateReady(true);
+        });
+        // Watch for a new SW installing
+        reg.addEventListener('updatefound', () => {
+          const nw = reg.installing;
+          if (!nw) return;
+          nw.addEventListener('statechange', () => {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+              setUpdateReady(true);
+            }
           });
-        }
+        });
+        // Actively check for updates now (catches case where SW updated between visits)
+        reg.update().catch(() => {});
       });
     }
   }, []);
