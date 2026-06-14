@@ -1,4 +1,4 @@
-const CACHE = 'fairway-v16';
+const CACHE = 'fairway-v17';
 const ASSETS = [
   './index.html', './app.js', './icon-192.png', './icon-512.png',
   'https://unpkg.com/react@18/umd/react.production.min.js',
@@ -17,13 +17,15 @@ self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => {
-      self.clients.claim();
-      self.clients.matchAll({type:'window'}).then(clients => {
-        clients.forEach(client => client.postMessage('UPDATE_READY'));
-      });
-    })
+    ).then(() => self.clients.claim())
   );
+});
+
+// After claiming, notify all windows so they can show the update banner
+self.addEventListener('activate', () => {
+  self.clients.matchAll({ type: 'window' }).then(clients => {
+    clients.forEach(client => client.postMessage('UPDATE_READY'));
+  });
 });
 
 self.addEventListener('fetch', e => {
@@ -34,6 +36,9 @@ self.addEventListener('fetch', e => {
         caches.open(CACHE).then(c => c.put(e.request, clone));
       }
       return res;
+    }))
+  );
+});
     }))
   );
 });
