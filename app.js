@@ -2419,8 +2419,8 @@ function ScorecardCanvas(_refSC) {
       ),
       React.createElement("div", { style: { width: 64, height: 64, borderRadius: "50%", background: dark ? "rgba(255,255,255,0.1)" : "rgba(26,71,49,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Cormorant Garamond',serif", fontSize: 28, fontWeight: 700, color: dark ? gold : green } }, player.name[0].toUpperCase())
     ),
-    React.createElement("div", { style: { padding: "0 40px 24px" } },
-      React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: is9 ? 140 : 120, fontWeight: 700, color: textPri, lineHeight: 1, letterSpacing: "-0.04em" } }, total || "—"),
+    React.createElement("div", { style: { padding: "0 40px 26px" } },
+      React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: is9 ? 120 : 100, fontWeight: 500, color: textPri, lineHeight: 1, letterSpacing: "-0.04em" } }, total || "—"),
       React.createElement("div", { style: { display: "flex", alignItems: "baseline", gap: 14, marginTop: 12 } },
         React.createElement("span", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 40, fontWeight: 700, color: dark ? gold : "#857e75", lineHeight: 1 } }, diffStr),
         React.createElement("span", { style: { fontSize: 20, color: textMut, letterSpacing: "0.08em", textTransform: "uppercase" } }, diff === 0 ? "even par" : diff > 0 ? "over par" : "under par")
