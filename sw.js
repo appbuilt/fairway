@@ -1,8 +1,9 @@
-const CACHE = 'fairway-v15';
+const CACHE = 'fairway-v16';
 const ASSETS = [
   './index.html', './app.js', './icon-192.png', './icon-512.png',
   'https://unpkg.com/react@18/umd/react.production.min.js',
   'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
+  'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js',
   'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap'
 ];
 
@@ -34,5 +35,7 @@ self.addEventListener('fetch', e => {
       }
       return res;
     }))
+  );
+});
   );
 });
