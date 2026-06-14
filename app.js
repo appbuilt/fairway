@@ -403,6 +403,12 @@ function Birdie() {
   const _useState9 = useState(false),
     updateReady = _useState9[0],
     setUpdateReady = _useState9[1];
+  const _useState10b = useState(null),
+    shareRound = _useState10b[0],
+    setShareRound = _useState10b[1];
+  const _useState10c = useState(null),
+    sharePlayer = _useState10c[0],
+    setSharePlayer = _useState10c[1];
   useEffect(() => {
     (async () => {
       try {
@@ -421,32 +427,21 @@ function Birdie() {
       setLoaded(true);
     })();
     if ('serviceWorker' in navigator) {
-      // Listen for message from SW (fires when SW activates while page is open)
       navigator.serviceWorker.addEventListener('message', e => {
         if (e.data === 'UPDATE_READY') setUpdateReady(true);
       });
-      // Check on every page load — covers cold open after SW already activated
       navigator.serviceWorker.getRegistration().then(reg => {
-        if (!reg) return;
-        // A waiting SW means an update installed but hasn't activated yet
-        if (reg.waiting) { setUpdateReady(true); return; }
-        // If the active SW is newer than what was controlling before, show banner
-        // We detect this by checking if controller just changed (controllerchange)
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          setUpdateReady(true);
-        });
-        // Watch for a new SW installing
-        reg.addEventListener('updatefound', () => {
-          const nw = reg.installing;
-          if (!nw) return;
-          nw.addEventListener('statechange', () => {
-            if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-              setUpdateReady(true);
-            }
+        if (reg && reg.waiting) setUpdateReady(true);
+        if (reg) {
+          reg.addEventListener('updatefound', () => {
+            const nw = reg.installing;
+            if (nw) nw.addEventListener('statechange', () => {
+              if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                setUpdateReady(true);
+              }
+            });
           });
-        });
-        // Actively check for updates now (catches case where SW updated between visits)
-        reg.update().catch(() => {});
+        }
       });
     }
   }, []);
@@ -585,7 +580,12 @@ const resetAll = async () => {
     round: focusRound,
     allRounds: rounds.filter(r => r.completed),
     onNavigate: r => setFocus(r),
-    onBack: () => setView(rounds.some(r => r.id === focusRound.id) ? "history" : "home")
+    onBack: () => setView(rounds.some(r => r.id === focusRound.id) ? "history" : "home"),
+    onShare: function(round, playerId) { setShareRound(round); setSharePlayer(playerId); }
+  }), shareRound && /*#__PURE__*/React.createElement(ShareSheet, {
+    round: shareRound,
+    activeP: sharePlayer || shareRound.players[0].id,
+    onClose: function() { setShareRound(null); setSharePlayer(null); }
   }), view === "history" && /*#__PURE__*/React.createElement(History, {
     rounds: rounds,
     onBack: () => setView("home"),
@@ -1908,11 +1908,14 @@ function Summary(_ref12) {
   let round = _ref12.round,
     allRounds = _ref12.allRounds,
     onNavigate = _ref12.onNavigate,
-    onBack = _ref12.onBack;
+    onBack = _ref12.onBack,
+    onShareExternal = _ref12.onShare;
   const _useState15 = useState(round.players[0].id),
     activeP = _useState15[0],
     setActiveP = _useState15[1];
-  const [showShare, setShowShare] = useState(false);
+  const _useState16 = useState(false),
+    showShare = _useState16[0],
+    setShowShare = _useState16[1];
 
   // Prev / next round navigation
   const idx = (allRounds == null ? void 0 : allRounds.findIndex(r => r.id === round.id)) ?? -1;
@@ -1952,7 +1955,7 @@ function Summary(_ref12) {
   }, /*#__PURE__*/React.createElement(TopBar, {
     onBack: onBack,
     title: "Round Summary",
-    onShare: () => setShowShare(true)
+    onShare: function() { onShareExternal ? onShareExternal(round, activeP) : setShowShare(true); }
   }), (prevRound || nextRound) && /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
@@ -2318,172 +2321,146 @@ function Summary(_ref12) {
       textAlign: "center",
       color: h.gir ? "var(--green)" : "var(--muted)"
     }
-  }, h.gir === true ? "Yes" : h.gir === false ? "No" : "—")))))))), showShare && React.createElement(ShareSheet, {round: round, activeP: activeP, onClose: () => setShowShare(false)});
+  }, h.gir === true ? "Yes" : h.gir === false ? "No" : "—"))))))));
 }
 
 
-// ─── SCORECARD CANVAS (off-screen, captured by html2canvas) ─────
+// ─── SCORECARD CANVAS ───────────────────────────────────────────
 function ScorecardCanvas(_refSC) {
   var round = _refSC.round, playerId = _refSC.playerId, theme = _refSC.theme, canvasRef = _refSC.canvasRef;
-  const dark = theme === "dark";
-  const bg      = dark ? "#1a4731" : "#f4f1ea";
-  const textPri = dark ? "#f4f1ea" : "#1a1915";
-  const textMut = dark ? "rgba(255,255,255,0.42)" : "#a09990";
-  const gold    = "#c9a84c";
-  const red     = "#c41230";
-  const green   = "#1a4731";
-  const divClr  = dark ? "rgba(201,168,76,0.35)" : "rgba(0,0,0,0.14)";
+  var dark     = theme === "dark";
+  var bg       = dark ? "#1a4731" : "#f4f1ea";
+  var textPri  = dark ? "#f4f1ea" : "#1a1915";
+  var textMut  = dark ? "rgba(255,255,255,0.42)" : "#a09990";
+  var gold     = "#c9a84c";
+  var red      = "#c41230";
+  var green    = "#1a4731";
+  var divClr   = dark ? "rgba(201,168,76,0.35)" : "rgba(0,0,0,0.14)";
 
-  const player = round.players.find(p => p.id === playerId) || round.players[0];
-  const sc = round.holes.map(h => ({ ...h, ...(h.scores[player.id] || emptyScore()) }));
-  const total = sc.reduce((a, h) => a + (h.strokes || 0), 0);
-  const diff  = total - round.par;
-  const is9   = sc.length <= 9;
+  var player = round.players.find(function(p) { return p.id === playerId; }) || round.players[0];
+  var sc = round.holes.map(function(h) { return Object.assign({}, h, h.scores[player.id] || emptyScore()); });
+  var total = sc.reduce(function(a, h) { return a + (h.strokes || 0); }, 0);
+  var diff  = total - round.par;
+  var is9   = sc.length <= 9;
 
-  const totalPutts = sc.reduce((a, h) => a + (h.putts || 0), 0);
-  const firH = sc.filter(h => h.par !== 3 && h.fairway !== null);
-  const girH = sc.filter(h => h.gir !== null);
-  const firPct = firH.length ? Math.round(firH.filter(h => h.fairway).length / firH.length * 100) : null;
-  const girPct = girH.length ? Math.round(girH.filter(h => h.gir).length / girH.length * 100) : null;
+  var totalPutts = sc.reduce(function(a, h) { return a + (h.putts || 0); }, 0);
+  var firH = sc.filter(function(h) { return h.par !== 3 && h.fairway !== null; });
+  var girH = sc.filter(function(h) { return h.gir !== null; });
+  var firPct = firH.length ? Math.round(firH.filter(function(h) { return h.fairway; }).length / firH.length * 100) : null;
+  var girPct = girH.length ? Math.round(girH.filter(function(h) { return h.gir; }).length / girH.length * 100) : null;
 
-  const bd = { eagle: 0, birdie: 0, par: 0, bogey: 0, dbl: 0 };
-  sc.forEach(h => {
-    const d = (h.strokes || 0) - h.par;
+  var bd = { eagle: 0, birdie: 0, par: 0, bogey: 0, dbl: 0 };
+  sc.forEach(function(h) {
+    var d = (h.strokes || 0) - h.par;
     if (d <= -2) bd.eagle++; else if (d === -1) bd.birdie++;
     else if (d === 0) bd.par++; else if (d === 1) bd.bogey++; else bd.dbl++;
   });
 
-  const holeBg = (h) => {
+  function holeBg(h) {
     if (!h.strokes) return dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)";
-    const d = h.strokes - h.par;
+    var d = h.strokes - h.par;
     if (d <= -2) return red;
     if (d === -1) return "rgba(196,18,48,0.55)";
     if (d === 0)  return dark ? "rgba(255,255,255,0.12)" : "rgba(26,71,49,0.12)";
     if (d === 1)  return dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.06)";
     return dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)";
-  };
-  const holeTextClr = (h) => {
+  }
+  function holeTextClr(h) {
     if (!h.strokes) return textMut;
-    const d = h.strokes - h.par;
-    return (d <= -1) ? "#fff" : textPri;
-  };
-  const holeLabelClr = (h) => {
+    return (h.strokes - h.par <= -1) ? "#fff" : textPri;
+  }
+  function holeLabelClr(h) {
     if (!h.strokes) return textMut;
-    const d = h.strokes - h.par;
-    return (d <= -1) ? "rgba(255,255,255,0.65)" : textMut;
-  };
-  const holeLabel = (h) => {
+    return (h.strokes - h.par <= -1) ? "rgba(255,255,255,0.65)" : textMut;
+  }
+  function holeLabel(h) {
     if (!h.strokes) return "";
-    const d = h.strokes - h.par;
+    var d = h.strokes - h.par;
     if (d <= -2) return "egl"; if (d === -1) return "bir";
     if (d === 0) return "par"; if (d === 1) return "bog"; return "dbl";
-  };
+  }
 
-  const diffStr = diff === 0 ? "E" : diff > 0 ? `+${diff}` : `${diff}`;
-  const nineLabel = is9
-    ? (round.holes[0].num <= 9 ? "Front 9" : "Back 9")
-    : null;
+  var diffStr = diff === 0 ? "E" : diff > 0 ? "+" + diff : "" + diff;
+  var nineLabel = is9 ? (round.holes[0].num <= 9 ? "Front 9" : "Back 9") : null;
+  var W = 540, H = 960;
+  var front9 = sc.slice(0, 9);
+  var back9  = sc.slice(9);
+  var cellW9  = Math.floor((W - 80) / 9);
+  var cellW18 = Math.floor((W - 70) / 9);
 
-  const W = 540, H = 960;
-
-  const HoleCell = (_refHC) => { var h = _refHC.h, cellW = _refHC.cellW, cellH = _refHC.cellH; return
-    React.createElement("div", {
+  function HoleCell(h, cellW, cellH) {
+    return React.createElement("div", {
+      key: h.num,
       style: {
-        width: cellW, height: cellH,
-        background: holeBg(h),
-        borderRadius: 4,
-        display: "flex", flexDirection: "column",
-        alignItems: "center", justifyContent: "center",
-        gap: 2, flexShrink: 0
+        width: cellW, height: cellH, background: holeBg(h),
+        borderRadius: 4, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", gap: 2, flexShrink: 0
       }
     },
       React.createElement("span", { style: { fontSize: 13, color: textMut, lineHeight: 1 } }, h.num),
-      React.createElement("span", { style: { fontSize: is9 ? 22 : 18, fontWeight: 700, fontFamily: "var(--fd)", color: holeTextClr(h), lineHeight: 1 } }, h.strokes || "—"),
+      React.createElement("span", { style: { fontSize: is9 ? 22 : 18, fontWeight: 700, fontFamily: "'Cormorant Garamond',serif", color: holeTextClr(h), lineHeight: 1 } }, h.strokes || "—"),
       is9 && React.createElement("span", { style: { fontSize: 11, color: holeLabelClr(h), textTransform: "uppercase", letterSpacing: "0.05em" } }, holeLabel(h))
     );
-  };
-
-  const front9 = sc.slice(0, 9);
-  const back9  = sc.slice(9);
+  }
 
   return React.createElement("div", {
     ref: canvasRef,
     style: {
-      position: "fixed", left: -9999, top: 0,
-      width: W, height: H,
-      background: bg,
-      display: "flex", flexDirection: "column",
-      fontFamily: "'Source Sans 3', sans-serif",
-      overflow: "hidden"
+      position: "fixed", left: -9999, top: 0, width: W, height: H,
+      background: bg, display: "flex", flexDirection: "column",
+      fontFamily: "'Source Sans 3',sans-serif", overflow: "hidden"
     }
   },
-    // Header
     React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "40px 40px 20px" } },
       React.createElement("div", null,
-        React.createElement("div", { style: { fontFamily: "'Cormorant Garamond', serif", fontSize: 44, fontWeight: 700, color: dark ? gold : green, letterSpacing: "0.01em", lineHeight: 1 } }, "Fairway"),
+        React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 44, fontWeight: 700, color: dark ? gold : green, lineHeight: 1 } }, "Fairway"),
         React.createElement("div", { style: { fontSize: 20, color: textMut, letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 6 } }, round.courseName),
         React.createElement("div", { style: { fontSize: 18, color: textMut, marginTop: 2 } }, fmtDate(round.date) + (nineLabel ? " · " + nineLabel : ""))
       ),
-      React.createElement("div", { style: { width: 64, height: 64, borderRadius: "50%", background: dark ? "rgba(255,255,255,0.1)" : "rgba(26,71,49,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 700, color: dark ? gold : green } }, player.name[0].toUpperCase())
+      React.createElement("div", { style: { width: 64, height: 64, borderRadius: "50%", background: dark ? "rgba(255,255,255,0.1)" : "rgba(26,71,49,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Cormorant Garamond',serif", fontSize: 28, fontWeight: 700, color: dark ? gold : green } }, player.name[0].toUpperCase())
     ),
-
-    // Hero
     React.createElement("div", { style: { padding: "0 40px 24px" } },
-      React.createElement("div", { style: { fontFamily: "'Cormorant Garamond', serif", fontSize: is9 ? 200 : 160, fontWeight: 700, color: textPri, lineHeight: 0.88, letterSpacing: "-0.04em" } }, total || "—"),
+      React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: is9 ? 200 : 160, fontWeight: 700, color: textPri, lineHeight: 0.88, letterSpacing: "-0.04em" } }, total || "—"),
       React.createElement("div", { style: { display: "flex", alignItems: "baseline", gap: 14, marginTop: 12 } },
-        React.createElement("span", { style: { fontFamily: "'Cormorant Garamond', serif", fontSize: 40, fontWeight: 700, color: dark ? gold : "#857e75", lineHeight: 1 } }, diffStr),
+        React.createElement("span", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 40, fontWeight: 700, color: dark ? gold : "#857e75", lineHeight: 1 } }, diffStr),
         React.createElement("span", { style: { fontSize: 20, color: textMut, letterSpacing: "0.08em", textTransform: "uppercase" } }, diff === 0 ? "even par" : diff > 0 ? "over par" : "under par")
       )
     ),
-
-    // Divider
     React.createElement("div", { style: { height: 1, background: divClr, margin: "0 40px" } }),
-
-    // Hole grid
     React.createElement("div", { style: { padding: "24px 28px 16px" } },
       is9
         ? React.createElement("div", { style: { display: "flex", gap: 5 } },
-            front9.map(h => React.createElement(HoleCell, { key: h.num, h, cellW: Math.floor((W - 56 - 40) / 9), cellH: 80 }))
+            front9.map(function(h) { return HoleCell(h, cellW9, 80); })
           )
         : React.createElement(React.Fragment, null,
             React.createElement("div", { style: { fontSize: 17, color: textMut, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 } }, "Front 9"),
             React.createElement("div", { style: { display: "flex", gap: 4, marginBottom: 14 } },
-              front9.map(h => React.createElement(HoleCell, { key: h.num, h, cellW: Math.floor((W - 56 - 32) / 9), cellH: 66 }))
+              front9.map(function(h) { return HoleCell(h, cellW18, 66); })
             ),
             React.createElement("div", { style: { fontSize: 17, color: textMut, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 } }, "Back 9"),
             React.createElement("div", { style: { display: "flex", gap: 4 } },
-              back9.map(h => React.createElement(HoleCell, { key: h.num, h, cellW: Math.floor((W - 56 - 32) / 9), cellH: 66 }))
+              back9.map(function(h) { return HoleCell(h, cellW18, 66); })
             )
           )
     ),
-
-    // Divider
     React.createElement("div", { style: { height: 1, background: divClr, margin: "0 40px" } }),
-
-    // Breakdown
     React.createElement("div", { style: { display: "flex", padding: "20px 28px 8px" } },
-      [["Eagle+", bd.eagle, red], ["Birdie", bd.birdie, red], ["Par", bd.par, dark ? textPri : green], ["Bogey", bd.bogey, textPri], ["Dbl+", bd.dbl, textMut]].map(([lbl, val, col]) =>
-        React.createElement("div", { key: lbl, style: { flex: 1, textAlign: "center" } },
-          React.createElement("div", { style: { fontFamily: "'Cormorant Garamond', serif", fontSize: 44, fontWeight: 700, color: col, lineHeight: 1 } }, val),
-          React.createElement("div", { style: { fontSize: 15, color: textMut, textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 4 } }, lbl)
-        )
-      )
+      [["Eagle+", bd.eagle, red], ["Birdie", bd.birdie, red], ["Par", bd.par, dark ? textPri : green], ["Bogey", bd.bogey, textPri], ["Dbl+", bd.dbl, textMut]].map(function(item) {
+        return React.createElement("div", { key: item[0], style: { flex: 1, textAlign: "center" } },
+          React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 44, fontWeight: 700, color: item[2], lineHeight: 1 } }, item[1]),
+          React.createElement("div", { style: { fontSize: 15, color: textMut, textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 4 } }, item[0])
+        );
+      })
     ),
-
-    // Divider
     React.createElement("div", { style: { height: 1, background: divClr, margin: "8px 40px" } }),
-
-    // Stats
     React.createElement("div", { style: { display: "flex", padding: "16px 28px 0" } },
-      [["Putts", totalPutts || "—"], ["FIR", firPct !== null ? firPct + "%" : "—"], ["GIR", girPct !== null ? girPct + "%" : "—"]].map(([lbl, val]) =>
-        React.createElement("div", { key: lbl, style: { flex: 1, textAlign: "center" } },
-          React.createElement("div", { style: { fontFamily: "'Cormorant Garamond', serif", fontSize: 38, fontWeight: 700, color: dark ? textPri : green, lineHeight: 1 } }, val),
-          React.createElement("div", { style: { fontSize: 15, color: textMut, textTransform: "uppercase", letterSpacing: "0.1em", marginTop: 4 } }, lbl)
-        )
-      )
+      [["Putts", totalPutts || "—"], ["FIR", firPct !== null ? firPct + "%" : "—"], ["GIR", girPct !== null ? girPct + "%" : "—"]].map(function(item) {
+        return React.createElement("div", { key: item[0], style: { flex: 1, textAlign: "center" } },
+          React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 38, fontWeight: 700, color: dark ? textPri : green, lineHeight: 1 } }, item[1]),
+          React.createElement("div", { style: { fontSize: 15, color: textMut, textTransform: "uppercase", letterSpacing: "0.1em", marginTop: 4 } }, item[0])
+        );
+      })
     ),
-
-    // Footer
     React.createElement("div", { style: { marginTop: "auto", padding: "20px 40px 40px", display: "flex", justifyContent: "space-between", alignItems: "center" } },
       React.createElement("div", { style: { fontSize: 20, color: textMut, letterSpacing: "0.05em" } }, player.name),
       React.createElement("div", { style: { fontSize: 17, color: textMut, letterSpacing: "0.12em", textTransform: "uppercase" } }, "fairway")
@@ -2494,155 +2471,106 @@ function ScorecardCanvas(_refSC) {
 // ─── SHARE SHEET ────────────────────────────────────────────────
 function ShareSheet(_refSS) {
   var round = _refSS.round, activeP = _refSS.activeP, onClose = _refSS.onClose;
-  const [theme, setTheme] = useState("dark");
-  const [shareP, setShareP] = useState(activeP);
-  const [status, setStatus] = useState(null); // null | "generating" | "done" | "error"
-  const canvasRef = useRef(null);
+  var _ust1 = useState("dark"),   theme  = _ust1[0], setTheme  = _ust1[1];
+  var _ust2 = useState(activeP),  shareP = _ust2[0], setShareP = _ust2[1];
+  var _ust3 = useState(null),     status = _ust3[0], setStatus = _ust3[1];
+  var canvasRef = React.useRef(null);
 
-  const generate = async (action) => {
+  function generate(action) {
     setStatus("generating");
-    try {
-      const el = canvasRef.current;
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: null,
-        logging: false
-      });
-      if (action === "save") {
-        const link = document.createElement("a");
-        link.download = "fairway-scorecard.png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-        setStatus("done");
-      } else {
-        canvas.toBlob(async (blob) => {
-          const file = new File([blob], "fairway-scorecard.png", { type: "image/png" });
-          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: "My Fairway Scorecard" });
-          } else {
-            // fallback to download
-            const link = document.createElement("a");
-            link.download = "fairway-scorecard.png";
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-          }
+    var el = canvasRef.current;
+    if (!el) { setStatus("error"); return; }
+    html2canvas(el, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: null, logging: false })
+      .then(function(canvas) {
+        if (action === "save") {
+          var link = document.createElement("a");
+          link.download = "fairway-scorecard.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
           setStatus("done");
-        }, "image/png");
-      }
-    } catch (e) {
-      console.error(e);
-      setStatus("error");
-    }
-  };
+        } else {
+          canvas.toBlob(function(blob) {
+            var file = new File([blob], "fairway-scorecard.png", { type: "image/png" });
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+              navigator.share({ files: [file], title: "My Fairway Scorecard" }).then(function() { setStatus("done"); });
+            } else {
+              var link = document.createElement("a");
+              link.download = "fairway-scorecard.png";
+              link.href = canvas.toDataURL("image/png");
+              link.click();
+              setStatus("done");
+            }
+          }, "image/png");
+        }
+      })
+      .catch(function() { setStatus("error"); });
+  }
 
   return React.createElement(React.Fragment, null,
-    // Off-screen card for capture
-    React.createElement(ScorecardCanvas, { round, playerId: shareP, theme, canvasRef }),
-
-    // Backdrop
+    React.createElement(ScorecardCanvas, { round: round, playerId: shareP, theme: theme, canvasRef: canvasRef }),
     React.createElement("div", {
       onClick: onClose,
-      style: {
-        position: "fixed", inset: 0, zIndex: 200,
-        background: "rgba(0,0,0,0.55)"
-      }
+      style: { position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.55)" }
     }),
-
-    // Bottom sheet
     React.createElement("div", {
-      onClick: e => e.stopPropagation(),
+      onClick: function(e) { e.stopPropagation(); },
       style: {
         position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 201,
-        background: "var(--cream)",
-        borderRadius: "16px 16px 0 0",
-        padding: "0 0 env(safe-area-inset-bottom, 0)"
+        background: "var(--cream)", borderRadius: "16px 16px 0 0",
+        paddingBottom: "env(safe-area-inset-bottom, 0)"
       }
     },
-      // Handle
       React.createElement("div", { style: { padding: "12px 0 0", display: "flex", justifyContent: "center" } },
         React.createElement("div", { style: { width: 36, height: 4, borderRadius: 2, background: "var(--border)" } })
       ),
-
-      // Title
       React.createElement("div", { style: { padding: "12px 20px 0", display: "flex", justifyContent: "space-between", alignItems: "center" } },
         React.createElement("div", { style: { fontFamily: "var(--fd)", fontSize: 20, fontWeight: 600, color: "var(--text)" } }, "Share Scorecard"),
-        React.createElement("button", {
-          onClick: onClose,
-          style: { background: "none", border: "none", fontSize: 22, color: "var(--muted)", cursor: "pointer", padding: "2px 0", lineHeight: 1 }
-        }, "×")
+        React.createElement("button", { onClick: onClose, style: { background: "none", border: "none", fontSize: 22, color: "var(--muted)", cursor: "pointer", padding: "2px 0", lineHeight: 1 } }, "×")
       ),
-
-      // Player selector (only shown for multiplayer)
       round.players.length > 1 && React.createElement("div", { style: { padding: "14px 20px 0" } },
         React.createElement("div", { style: { fontSize: 10, color: "var(--muted)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8 } }, "Player"),
         React.createElement("div", { style: { display: "flex", gap: 6, flexWrap: "wrap" } },
-          round.players.map(p =>
-            React.createElement("button", {
-              key: p.id,
-              onClick: () => setShareP(p.id),
+          round.players.map(function(p) {
+            return React.createElement("button", {
+              key: p.id, onClick: function() { setShareP(p.id); },
               style: {
-                padding: "5px 14px", borderRadius: 20,
-                fontSize: 13, fontFamily: "var(--fb)",
-                cursor: "pointer",
+                padding: "5px 14px", borderRadius: 20, fontSize: 13,
+                fontFamily: "var(--fb)", cursor: "pointer",
                 background: shareP === p.id ? "var(--green)" : "var(--white)",
                 color: shareP === p.id ? "var(--white)" : "var(--text-2)",
                 border: shareP === p.id ? "1px solid var(--green)" : "1px solid var(--border)",
                 fontWeight: shareP === p.id ? 600 : 400
               }
-            }, p.name)
-          )
+            }, p.name);
+          })
         )
       ),
-
-      // Theme toggle
       React.createElement("div", { style: { padding: "14px 20px 0" } },
         React.createElement("div", { style: { fontSize: 10, color: "var(--muted)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8 } }, "Theme"),
         React.createElement("div", { style: { display: "flex", gap: 8 } },
           React.createElement("button", {
-            onClick: () => setTheme("dark"),
-            style: {
-              flex: 1, padding: "10px 8px",
-              borderRadius: "var(--r)",
-              border: theme === "dark" ? "1.5px solid var(--green)" : "1px solid var(--border)",
-              background: theme === "dark" ? "#eaf3ec" : "var(--white)",
-              cursor: "pointer", fontFamily: "var(--fb)", fontSize: 12,
-              color: theme === "dark" ? "var(--green)" : "var(--text-2)",
-              fontWeight: theme === "dark" ? 600 : 400,
-              display: "flex", alignItems: "center", gap: 8
-            }
+            onClick: function() { setTheme("dark"); },
+            style: { flex: 1, padding: "10px 8px", borderRadius: "var(--r)", cursor: "pointer", fontFamily: "var(--fb)", fontSize: 12, display: "flex", alignItems: "center", gap: 8, border: theme === "dark" ? "1.5px solid var(--green)" : "1px solid var(--border)", background: theme === "dark" ? "#eaf3ec" : "var(--white)", color: theme === "dark" ? "var(--green)" : "var(--text-2)", fontWeight: theme === "dark" ? 600 : 400 }
           },
             React.createElement("div", { style: { width: 18, height: 18, borderRadius: 4, background: "#1a4731", flexShrink: 0 } }),
             "Dark green"
           ),
           React.createElement("button", {
-            onClick: () => setTheme("cream"),
-            style: {
-              flex: 1, padding: "10px 8px",
-              borderRadius: "var(--r)",
-              border: theme === "cream" ? "1.5px solid var(--gold-dec)" : "1px solid var(--border)",
-              background: theme === "cream" ? "#fdf8ee" : "var(--white)",
-              cursor: "pointer", fontFamily: "var(--fb)", fontSize: 12,
-              color: theme === "cream" ? "#7a5c1a" : "var(--text-2)",
-              fontWeight: theme === "cream" ? 600 : 400,
-              display: "flex", alignItems: "center", gap: 8
-            }
+            onClick: function() { setTheme("cream"); },
+            style: { flex: 1, padding: "10px 8px", borderRadius: "var(--r)", cursor: "pointer", fontFamily: "var(--fb)", fontSize: 12, display: "flex", alignItems: "center", gap: 8, border: theme === "cream" ? "1.5px solid var(--gold-dec)" : "1px solid var(--border)", background: theme === "cream" ? "#fdf8ee" : "var(--white)", color: theme === "cream" ? "#7a5c1a" : "var(--text-2)", fontWeight: theme === "cream" ? 600 : 400 }
           },
             React.createElement("div", { style: { width: 18, height: 18, borderRadius: 4, background: "#f4f1ea", border: "1px solid #ccc7bb", flexShrink: 0 } }),
             "Cream"
           )
         )
       ),
-
-      // Action buttons
       React.createElement("div", { style: { padding: "16px 20px 24px", display: "flex", flexDirection: "column", gap: 8 } },
         status === "generating"
-          ? React.createElement("div", { style: { textAlign: "center", padding: "20px", color: "var(--muted)", fontSize: 14, fontFamily: "var(--fb)" } }, "Generating image…")
+          ? React.createElement("div", { style: { textAlign: "center", padding: "20px", color: "var(--muted)", fontSize: 14 } }, "Generating image…")
           : React.createElement(React.Fragment, null,
               React.createElement("button", {
-                onClick: () => generate("share"),
-                style: { ...S.btnPrimary, width: "100%", padding: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }
+                onClick: function() { generate("share"); },
+                style: Object.assign({}, S.btnPrimary, { width: "100%", padding: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 10 })
               },
                 React.createElement("svg", { viewBox: "0 0 24 24", width: 18, height: 18, fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" },
                   React.createElement("path", { d: "M8 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" }),
@@ -2652,8 +2580,8 @@ function ShareSheet(_refSS) {
                 "Share…"
               ),
               React.createElement("button", {
-                onClick: () => generate("save"),
-                style: { ...S.btnSecondary, width: "100%", padding: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }
+                onClick: function() { generate("save"); },
+                style: Object.assign({}, S.btnSecondary, { width: "100%", padding: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 10 })
               },
                 React.createElement("svg", { viewBox: "0 0 24 24", width: 18, height: 18, fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" },
                   React.createElement("path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }),
@@ -3524,8 +3452,7 @@ function TopBar(_ref18) {
       fontWeight: 600,
       letterSpacing: "0.01em"
     }
-  }, title),
-  onShare
+  }, title), onShare
     ? /*#__PURE__*/React.createElement("button", {
         onClick: onShare,
         "aria-label": "Share scorecard",
@@ -3537,10 +3464,10 @@ function TopBar(_ref18) {
           WebkitTapHighlightColor: "transparent"
         }
       }, /*#__PURE__*/React.createElement("svg", {
-        viewBox: "0 0 24 24", width: 22, height: 22,
-        fill: "none", stroke: "rgba(255,255,255,0.85)",
-        strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round"
-      },
+          viewBox: "0 0 24 24", width: 22, height: 22,
+          fill: "none", stroke: "rgba(255,255,255,0.85)",
+          strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round"
+        },
         /*#__PURE__*/React.createElement("path", { d: "M8 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" }),
         /*#__PURE__*/React.createElement("polyline", { points: "15 3 12 0 9 3" }),
         /*#__PURE__*/React.createElement("line", { x1: "12", y1: "0", x2: "12", y2: "13" })
