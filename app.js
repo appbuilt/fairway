@@ -303,6 +303,59 @@ const PRELOADED_COURSES = [{
     yards: 310,
     strokeindex: 14
   }]
+}, {
+  id: "chalsa",
+  name: "Chalsa Polo Club Golf Links",
+  shortName: "Chalsa",
+  location: "Chulsa Tea Garden, Matelli",
+  par: 36,
+  totalYards: 2850,
+  holes: [{
+    num: 1,
+    par: 4,
+    yards: 360,
+    strokeindex: 3
+  }, {
+    num: 2,
+    par: 3,
+    yards: 155,
+    strokeindex: 9
+  }, {
+    num: 3,
+    par: 4,
+    yards: 340,
+    strokeindex: 5
+  }, {
+    num: 4,
+    par: 5,
+    yards: 480,
+    strokeindex: 1
+  }, {
+    num: 5,
+    par: 4,
+    yards: 355,
+    strokeindex: 7
+  }, {
+    num: 6,
+    par: 3,
+    yards: 165,
+    strokeindex: 8
+  }, {
+    num: 7,
+    par: 4,
+    yards: 375,
+    strokeindex: 2
+  }, {
+    num: 8,
+    par: 5,
+    yards: 460,
+    strokeindex: 4
+  }, {
+    num: 9,
+    par: 4,
+    yards: 320,
+    strokeindex: 6
+  }]
 }];
 const KEY = "birdie-v3";
 const pid = () => Math.random().toString(36).slice(2, 8);
@@ -419,7 +472,12 @@ function Birdie() {
         if (r != null && r.value) {
           var _d$courses;
           const d = JSON.parse(r.value);
-          if ((_d$courses = d.courses) != null && _d$courses.length) setCourses(d.courses);
+          if ((_d$courses = d.courses) != null && _d$courses.length) {
+            // Merge: keep saved courses, add any preloaded ones missing by id
+            const savedIds = new Set(d.courses.map(c => c.id));
+            const merged = [...d.courses, ...PRELOADED_COURSES.filter(c => !savedIds.has(c.id))];
+            setCourses(merged);
+          }
           if (d.rounds) setRounds(d.rounds);
           if (d.playerName) setName(d.playerName);
         }
@@ -1172,9 +1230,9 @@ function ScorePills(_ref7) {
   return /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
-      gap: 5,
+      gap: 7,
       overflowX: "auto",
-      padding: "4px 0",
+      padding: "6px 0",
       scrollbarWidth: "none",
       msOverflowStyle: "none"
     }
@@ -1192,19 +1250,19 @@ function ScorePills(_ref7) {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        minWidth: 54,
-        height: 66,
+        minWidth: 68,
+        height: 82,
         flexShrink: 0,
-        border: `1px solid ${bdr}`,
+        border: `2px solid ${bdr}`,
         borderRadius: "var(--r)",
         background: bg,
         cursor: "pointer",
-        gap: 3,
-        padding: "6px 4px"
+        gap: 4,
+        padding: "0px 2px"
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
-        fontSize: 24,
+        fontSize: 40,
         fontWeight: 700,
         fontFamily: "var(--fd)",
         color: col,
@@ -1213,11 +1271,12 @@ function ScorePills(_ref7) {
       }
     }, s), /*#__PURE__*/React.createElement("span", {
       style: {
-        fontSize: 9,
-        color: sel ? "rgba(255,255,255,0.7)" : "var(--muted)",
+        fontSize: 14,
+        color: sel ? "rgba(255,255,255,0.85)" : "var(--muted)",
         textTransform: "uppercase",
-        letterSpacing: "0.08em",
-        fontFamily: "var(--fb)"
+        letterSpacing: "0.06em",
+        fontFamily: "var(--fb)",
+        fontWeight: 600
       }
     }, scoreLabel(s, par)));
   }));
@@ -1287,7 +1346,7 @@ function Scoring(_ref8) {
       border: "none",
       color: "rgba(255,255,255,0.75)",
       cursor: "pointer",
-      fontSize: 18,
+      fontSize: 24,
       lineHeight: 1,
       padding: "4px 0",
       fontFamily: "var(--fb)"
@@ -1304,14 +1363,7 @@ function Scoring(_ref8) {
       fontFamily: "var(--fb)",
       fontWeight: 500
     }
-  }, round.courseName), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 12,
-      color: "rgba(255,255,255,0.55)",
-      letterSpacing: "0.06em",
-      marginTop: 3
-    }
-  }, "Hole ", holeIdx + 1, " of ", total)), /*#__PURE__*/React.createElement("div", {
+  }, round.courseName)), /*#__PURE__*/React.createElement("div", {
     style: {
       width: 36
     }
@@ -1371,8 +1423,8 @@ function Scoring(_ref8) {
       background: "var(--white)",
       borderBottom: "1px solid var(--border-lt)",
       display: "flex",
-      gap: 2,
-      padding: "8px 10px",
+      gap: 4,
+      padding: "10px 12px",
       overflowX: "auto",
       scrollbarWidth: "none",
       msOverflowStyle: "none"
@@ -1387,46 +1439,48 @@ function Scoring(_ref8) {
       key: i,
       onClick: () => goHole(i),
       style: {
-        width: 36,
-        height: 36,
+        width: 46,
+        height: 46,
         border: "none",
+        borderRadius: 6,
         flexShrink: 0,
         cursor: "pointer",
         background: isCur ? "var(--green)" : anyScored ? "var(--cream)" : "transparent",
         color: isCur ? "var(--white)" : anyScored ? "var(--text)" : "var(--muted)",
-        fontSize: 14,
-        fontWeight: 700,
+        fontSize: 24,
+        fontWeight: 500,
         fontFamily: "var(--fb)"
       }
     }, h.num);
   })), /*#__PURE__*/React.createElement("div", {
     style: {
       background: "var(--cream)",
-      padding: "14px 16px",
+      padding: "18px 16px",
       borderBottom: "1px solid var(--border-lt)"
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: "var(--fd)",
-      fontSize: 32,
+      fontSize: 42,
       fontWeight: 600,
       color: "var(--text)",
-      marginBottom: 10,
+      marginBottom: 12,
       letterSpacing: "0.01em"
     }
   }, "Hole ", hole.num), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
-      gap: 6
+      gap: 8
     }
-  }, [`Par ${hole.par}`, `${hole.yards} yds`, `Stroke Index ${hole.strokeindex}`].map(t => /*#__PURE__*/React.createElement("div", {
+  }, [`Par ${hole.par}`, `${hole.yards} yds`, `SI ${hole.strokeindex}`].map(t => /*#__PURE__*/React.createElement("div", {
     key: t,
     style: {
-      padding: "6px 12px",
+      padding: "8px 16px",
       background: "var(--white)",
       border: "1px solid var(--border-lt)",
       borderRadius: "var(--r)",
-      fontSize: 13,
+      fontSize: 20,
+      fontWeight: 600,
       color: "var(--text-2)",
       fontFamily: "var(--fb)"
     }
@@ -1449,8 +1503,8 @@ function Scoring(_ref8) {
       style: {
         display: "flex",
         alignItems: "center",
-        padding: "14px 16px",
-        gap: 10,
+        padding: "18px 16px",
+        gap: 14,
         width: "100%",
         background: "none",
         border: "none",
@@ -1460,8 +1514,8 @@ function Scoring(_ref8) {
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        width: 36,
-        height: 36,
+        width: 46,
+        height: 46,
         borderRadius: "50%",
         flexShrink: 0,
         background: isExp ? "var(--green)" : "var(--cream)",
@@ -1469,7 +1523,7 @@ function Scoring(_ref8) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontSize: 15,
+        fontSize: 20,
         fontWeight: 700,
         fontFamily: "var(--fd)"
       }
@@ -1479,30 +1533,51 @@ function Scoring(_ref8) {
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: 600,
         color: "var(--text)"
       }
-    }, p.name), sc.strokes > 0 && /*#__PURE__*/React.createElement("div", {
+    }, p.name), (() => {
+      return null;
+    })()), (() => {
+      // Running total on the right: only holes that have been scored
+      const scoredHoles = round.holes.filter(h => (h.scores[p.id]?.strokes || 0) > 0);
+      if (scoredHoles.length === 0) return null;
+      const totalStrokes = scoredHoles.reduce((a, h) => a + h.scores[p.id].strokes, 0);
+      const totalPar = scoredHoles.reduce((a, h) => a + h.par, 0);
+      const diff = totalStrokes - totalPar;
+      const diffStr = diff === 0 ? "E" : diff > 0 ? `+${diff}` : `${diff}`;
+      const diffColor = diff < 0 ? "#c41230" : diff === 0 ? "#1a4731" : "#1a1915";
+      return /*#__PURE__*/React.createElement("div", {
+        style: {
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "baseline",
+          marginRight: 10,
+          gap: 6
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontFamily: "var(--fb)",
+          fontSize: 40,
+          fontWeight: 500,
+          color: "#1a1915",
+          lineHeight: 1
+        }
+      }, totalStrokes), /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: 30,
+          fontWeight: 500,
+          fontFamily: "var(--fb)",
+          color: diffColor,
+          lineHeight: 1
+        }
+      }, `(${diffStr})`));
+    })(), /*#__PURE__*/React.createElement("div", {
       style: {
-        fontSize: 12,
-        color: scoreTextColor(sc.strokes, hole.par),
-        marginTop: 1
-      }
-    }, scoreLabel(sc.strokes, hole.par))), sc.strokes > 0 && /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontFamily: "var(--fd)",
-        fontSize: 30,
-        fontWeight: 700,
-        color: scoreTextColor(sc.strokes, hole.par),
-        marginRight: 8,
-        lineHeight: 1
-      }
-    }, sc.strokes), /*#__PURE__*/React.createElement("div", {
-      style: {
-        padding: "7px 16px",
+        padding: "10px 20px",
         borderRadius: "var(--r)",
-        fontSize: 13,
+        fontSize: 15,
         fontWeight: 600,
         fontFamily: "var(--fb)",
         flexShrink: 0,
@@ -1539,10 +1614,10 @@ function Scoring(_ref8) {
     }, "\u2212"), /*#__PURE__*/React.createElement("span", {
       style: {
         fontFamily: "var(--fd)",
-        fontSize: 28,
+        fontSize: 38,
         fontWeight: 700,
         color: "var(--text)",
-        minWidth: 36,
+        minWidth: 48,
         textAlign: "center",
         lineHeight: 1
       }
@@ -1586,7 +1661,7 @@ function Scoring(_ref8) {
         background: "var(--cream)",
         color: "var(--muted)",
         cursor: "pointer",
-        fontSize: 10,
+        fontSize: 16,
         fontFamily: "var(--fb)",
         display: "flex",
         alignItems: "center",
@@ -1628,12 +1703,12 @@ function Scoring(_ref8) {
     disabled: holeIdx === 0,
     style: {
       flex: 1,
-      padding: "16px 8px",
+      padding: "20px 8px",
       border: "none",
       background: "var(--cream)",
       color: "var(--text-2)",
       cursor: holeIdx === 0 ? "default" : "pointer",
-      fontSize: 13,
+      fontSize: 16,
       fontFamily: "var(--fb)",
       opacity: holeIdx === 0 ? 0.3 : 1
     }
@@ -1641,12 +1716,12 @@ function Scoring(_ref8) {
     onClick: () => setBoard(!showBoard),
     style: {
       flex: 1.4,
-      padding: "16px 8px",
+      padding: "20px 8px",
       border: "none",
       background: showBoard ? "var(--green)" : "var(--cream)",
       color: showBoard ? "var(--white)" : "var(--text-2)",
       cursor: "pointer",
-      fontSize: 13,
+      fontSize: 16,
       fontWeight: 600,
       fontFamily: "var(--fb)"
     }
@@ -1654,12 +1729,12 @@ function Scoring(_ref8) {
     onClick: () => goHole(holeIdx + 1),
     style: {
       flex: 1,
-      padding: "16px 8px",
+      padding: "20px 8px",
       border: "none",
       background: "var(--green)",
       color: "var(--white)",
       cursor: "pointer",
-      fontSize: 13,
+      fontSize: 18,
       fontWeight: 600,
       fontFamily: "var(--fb)"
     }
@@ -1667,12 +1742,12 @@ function Scoring(_ref8) {
     onClick: () => allDone && onFinish(round),
     style: {
       flex: 1,
-      padding: "16px 8px",
+      padding: "20px 8px",
       border: "none",
       background: allDone ? "var(--green)" : "var(--cream)",
       color: allDone ? "var(--white)" : "var(--muted)",
       cursor: allDone ? "pointer" : "default",
-      fontSize: 13,
+      fontSize: 16,
       fontWeight: 600,
       fontFamily: "var(--fb)"
     }
@@ -1720,12 +1795,12 @@ function FieldLabel(_ref1) {
     style = _ref1.style;
   return /*#__PURE__*/React.createElement("div", {
     style: {
-      fontSize: 10,
+      fontSize: 13,
       fontWeight: 600,
       color: "var(--green)",
       textTransform: "uppercase",
       letterSpacing: "0.14em",
-      marginBottom: 8,
+      marginBottom: 10,
       ...style
     }
   }, children);
@@ -3642,13 +3717,13 @@ const S = {
     letterSpacing: "0.04em"
   },
   ctrBtn: {
-    width: 44,
-    height: 44,
+    width: 56,
+    height: 56,
     borderRadius: "var(--r)",
-    border: "1px solid var(--border)",
+    border: "2px solid var(--border)",
     background: "var(--white)",
     color: "var(--green)",
-    fontSize: 22,
+    fontSize: 28,
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
